@@ -3,9 +3,7 @@ package com.example.demo.controllers;
 import com.example.demo.service.DriverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/drivers")
@@ -20,12 +18,12 @@ public class DriverController {
         return driverService.driverName();
     }
 
-    @GetMapping("/surname")
+    @PostMapping ("/surname")
     public String getDriverSurname(){
         return "Ivanov";
     }
 
-    @GetMapping("/age")
+    @PutMapping ("/age")
     public String getDriverAge(){
         return "35";
     }
