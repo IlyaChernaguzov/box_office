@@ -18,7 +18,7 @@ public class PaginationUtils {
 
         if (order == null || sort == null){ // если не передан параметр сортировки и в каком из вариантов сортировать
             return PageRequest.of(page, perPage); // возвращем номер страницы и количество элементов
-        } else if (order.equals("DESC")) {
+        } else if (order.isDescending()) { // boolean
             return PageRequest.of(page, perPage, Sort.by(Sort.Direction.DESC, sort));// сортирует по параметру sort в обратном порядке "DESC"
         } else {
             return PageRequest.of(page, perPage, Sort.by(Sort.Direction.ASC, sort));// сортирует по параметру sort в прямом порядке "ASC"
