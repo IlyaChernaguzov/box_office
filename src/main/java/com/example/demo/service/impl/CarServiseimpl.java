@@ -39,7 +39,7 @@ public class CarServiseimpl implements CarService {
     private final ObjectMapper mapper;// конвертирует сущности (carDTO в car и обратно)
 
     @Override
-    public CarDTORequest create(CarDTORequest carDTORequest) {
+    public CarDTOResponse create(CarDTORequest carDTORequest) {
         carRepository.findByStateNumber(carDTORequest.getStateNumber()).ifPresent(
                 c -> {throw new CustomException("Транспорт с рег.номером" + carDTORequest.getStateNumber() + " уже существует", HttpStatus.BAD_REQUEST); // создаем исключение "если ТС уже существует, при создании выскачит ошибка"
                 }
@@ -53,7 +53,7 @@ public class CarServiseimpl implements CarService {
     }
 
     @Override
-    public CarDTORequest update(CarDTORequest carDTORequest) {
+    public CarDTOResponse update(CarDTORequest carDTORequest) {
         Car car = getCar(carDTORequest.getStateNumber()); // создаем исключение "если ТС не найдено, при обновлении выскачит ошибка"
 
         car.setColorsCar(carDTORequest.getColorsCar() == null ? car.getColorsCar() : carDTORequest.getColorsCar()); // проверяем пришедшие данный на null с помощью "?", если null, то присваиваем прошлое значение. ":" - если не null, то присвиваем пришедшее значение
@@ -71,11 +71,10 @@ public class CarServiseimpl implements CarService {
     @Override
     public CarDTOResponse get(String stateNumber) {
         Car car = getCar(stateNumber);
-        DriverDTO driver = mapper.convertValue(car.getDriver(), DriverDTO.class);
+        DriverDTO driver = mapper.convertValue(car.getDriver(), DriverDTO.class);// конвертируем driver из бд в DriverDTO
+        CarDTOResponse result = mapper.convertValue(car, CarDTOResponse.class);// конвертируем car из бд в CarDTOResponse - ответ
+        result.setDriverDTO(driver);// устанавливаем водителя к ТС в ответе
 
-        CarDTOResponse result = mapper.convertValue(car, CarDTOResponse.class);
-
-        result.setDriverDTO(driver);
         return result;
     }
 

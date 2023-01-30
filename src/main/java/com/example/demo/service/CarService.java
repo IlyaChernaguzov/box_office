@@ -8,9 +8,9 @@ import org.springframework.ui.ModelMap;
 import java.util.List;
 
 public interface CarService {
-    CarDTORequest create(CarDTORequest carDTORequest);
+    CarDTOResponse create(CarDTORequest carDTORequest);
 
-    CarDTORequest update(CarDTORequest carDTORequest);
+    CarDTOResponse update(CarDTORequest carDTORequest);
 
     CarDTOResponse get(String stateNumber);
 

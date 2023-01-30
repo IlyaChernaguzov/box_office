@@ -31,14 +31,14 @@ public class CarController {
 
     @PutMapping
     @Operation(summary = "Обновление данных транспортного средства")
-    private ResponseEntity<CarDTORequest> updateCar(@RequestBody CarDTORequest carDTORequest){
-        return ResponseEntity.ok(carService.update(carDTORequest));
+    private ResponseEntity<CarDTOResponse> updateCar(@RequestBody CarDTOResponse carDTOResponse){
+        return ResponseEntity.ok(carService.update(carDTOResponse));
 
     }
 
     @GetMapping
     @Operation(summary = "Посмотреть транспортное средство")
-    private ResponseEntity<CarDTOResponse> getCar(@RequestParam String stateNumber){
+    private ResponseEntity<CarDTOResponse> getCar(@RequestParam String stateNumber){//возвращает именно ответ CarDTOResponse
         return ResponseEntity.ok(carService.get(stateNumber));
 
     }
