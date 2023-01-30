@@ -38,7 +38,7 @@ public class CarController {
 
     @GetMapping
     @Operation(summary = "Посмотреть транспортное средство")
-    private ResponseEntity<CarDTORequest> getCar(@RequestParam String stateNumber){
+    private ResponseEntity<CarDTOResponse> getCar(@RequestParam String stateNumber){
         return ResponseEntity.ok(carService.get(stateNumber));
 
     }
@@ -62,7 +62,7 @@ public class CarController {
     @Operation(summary = "Сортировать транспортные средства")
     public ModelMap getAllCars(@RequestParam(required = false, defaultValue = "1") Integer page,
                                @RequestParam(required = false, defaultValue = "10") Integer perPage,
-                               @RequestParam(required = false, defaultValue = "stateName") String sort,
+                               @RequestParam(required = false, defaultValue = "carOld") String sort,
                                @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
         return carService.getAllCars(page, perPage, sort, order);
 

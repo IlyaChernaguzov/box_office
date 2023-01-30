@@ -12,7 +12,7 @@ public interface CarService {
 
     CarDTORequest update(CarDTORequest carDTORequest);
 
-    CarDTORequest get(String stateNumber);
+    CarDTOResponse get(String stateNumber);
 
     void delete(String stateNumber);
 

@@ -27,8 +27,8 @@ public class Car {
     @Enumerated(EnumType.STRING)
     Colors colorsCar;
 
-    @Column(name = "car_date")
-    String carDate;
+    @Column(name = "car_old")
+    String carOld;
 
     @Column(name = "brand_car")
     String brandCar;

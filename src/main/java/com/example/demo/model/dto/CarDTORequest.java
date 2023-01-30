@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 public class CarDTORequest {
 
     Colors colorsCar;
-    String carDate;
+    String carOld;
     String brandCar;
     String modelCar;
     String stateNumber;

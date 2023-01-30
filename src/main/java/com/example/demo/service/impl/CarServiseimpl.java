@@ -36,7 +36,7 @@ public class CarServiseimpl implements CarService {
 
     private final CarRepository carRepository;// связь с бд
 
-    private final ObjectMapper mapper;// переопределяет сущности (carDTO в car и обратно)
+    private final ObjectMapper mapper;// конвертирует сущности (carDTO в car и обратно)
 
     @Override
     public CarDTORequest create(CarDTORequest carDTORequest) {
@@ -57,7 +57,7 @@ public class CarServiseimpl implements CarService {
         Car car = getCar(carDTORequest.getStateNumber()); // создаем исключение "если ТС не найдено, при обновлении выскачит ошибка"
 
         car.setColorsCar(carDTORequest.getColorsCar() == null ? car.getColorsCar() : carDTORequest.getColorsCar()); // проверяем пришедшие данный на null с помощью "?", если null, то присваиваем прошлое значение. ":" - если не null, то присвиваем пришедшее значение
-        car.setCarDate(carDTORequest.getCarDate() == null ? car.getCarDate() : carDTORequest.getCarDate());
+        car.setCarOld(carDTORequest.getCarOld() == null ? car.getCarOld() : carDTORequest.getCarOld());
         car.setBrandCar(carDTORequest.getBrandCar() == null ? car.getBrandCar() : carDTORequest.getBrandCar());
         car.setModelCar(carDTORequest.getModelCar() == null ? car.getModelCar() : carDTORequest.getModelCar());
         car.setStateNumber(carDTORequest.getStateNumber() == null ? car.getStateNumber() : carDTORequest.getStateNumber());
@@ -69,10 +69,14 @@ public class CarServiseimpl implements CarService {
     }
 
     @Override
-    public CarDTORequest get(String stateNumber) {
+    public CarDTOResponse get(String stateNumber) {
         Car car = getCar(stateNumber);
+        DriverDTO driver = mapper.convertValue(car.getDriver(), DriverDTO.class);
 
-        return mapper.convertValue(car, CarDTOResponse.class);
+        CarDTOResponse result = mapper.convertValue(car, CarDTOResponse.class);
+
+        result.setDriverDTO(driver);
+        return result;
     }
 
     @Override
