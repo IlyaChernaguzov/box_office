@@ -6,13 +6,20 @@ import com.example.demo.model.entity.Driver;
 import com.example.demo.model.enums.DriverStatus;
 import com.example.demo.model.repository.DriverRepository;
 import com.example.demo.service.DriverService;
+import com.example.demo.utils.PaginationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.support.PagedListHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -25,7 +32,7 @@ public class DriverServiseimpl implements DriverService {
 
     @Override
     public DriverDTO create(DriverDTO driverDTO) { driverRepository.findByEmail(driverDTO.getEmail()).ifPresent(
-            c -> {throw new CustomException("Водитель с email: " + driverDTO.getEmail() + "уже существует", HttpStatus.BAD_REQUEST); // создаем исключение "если Водитель уже существует, при создании выскачит ошибка"
+            c -> {throw new CustomException("Водитель с email: " + driverDTO.getEmail() + " уже существует", HttpStatus.BAD_REQUEST); // создаем исключение "если Водитель уже существует, при создании выскачит ошибка"
             }
     );
 
@@ -35,6 +42,7 @@ public class DriverServiseimpl implements DriverService {
 
         return mapper.convertValue(save, DriverDTO.class);
 
+        // если значения не совпадают в запросе DTO и классе, то присваиваем значения вручную. Для дат требуется обработка исключений
 //        Driver driver = new Driver();
 //        driver.setName(driverDTO.getName());
 //        driver.setSurname(driverDTO.getSurname());
@@ -85,7 +93,21 @@ public class DriverServiseimpl implements DriverService {
     @Override
     public Driver getDriver(String email){
         return driverRepository.findByEmail(email)
-                .orElseThrow(()-> new CustomException("Водитель с email: " + email + "не найден", HttpStatus.NOT_FOUND));
+                .orElseThrow(()-> new CustomException("Водитель с email: " + email + " не найден", HttpStatus.NOT_FOUND));
 
+    }
+
+    @Override
+    public List<DriverDTO> getAllDrivers(Integer page, Integer perPage, String sort, Sort.Direction order) {
+        Pageable pageRequest = PaginationUtils.getPageRequest(page, perPage, sort, order);//используем метод getPageRequest класса PaginationUtils для проверки полученных параметров
+        Page<Driver> pageResult = driverRepository.findAll(pageRequest);// получает отсортированную страницу в формате Page из бд, согласно прешедшим параметрам. Из параметров Page можем вернуть только номер страницы и количество элементов
+
+        List<DriverDTO> collect = pageResult.getContent().stream()// получаем все значения
+                .map(c -> mapper.convertValue(c, DriverDTO.class))// конвентируем все значения в DriverDTO
+                .collect(Collectors.toList()); // собираем в список
+
+//        PagedListHolder<DriverDTO> result = new PagedListHolder<>();//PagedListHolder может передать больше данных
+
+        return collect;
     }
 }
