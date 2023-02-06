@@ -34,7 +34,7 @@ public class Driver {
     @Enumerated(EnumType.STRING)
     Gender gender;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     String email;
 
     @CreationTimestamp

@@ -114,16 +114,16 @@ public class CarServiseimpl implements CarService {
                 .map(c -> mapper.convertValue(c, CarDTORequest.class))// конвентируем все значения в CarDTORequest
                 .collect(Collectors.toList()); // собираем в список
 
-        PagedListHolder<CarDTORequest> result = new PagedListHolder<>(content);//PagedListHolder может передать больше данных
-
-        result.setPage(page);
-        result.setPageSize(perPage);
+//        PagedListHolder<CarDTORequest> result = new PagedListHolder<>(content);//PagedListHolder может передать больше данных
+//
+//        result.setPage(page);
+//        result.setPageSize(perPage);
 
         ModelMap map = new ModelMap();// предает в связке с оберткой PagedListHolder ключ значение информации, которая требуется логикой
-        map.addAttribute("content", result.getPageList());
+        map.addAttribute("content", content);
         map.addAttribute("pageNumber", page);
-        map.addAttribute("pageSize", result.getPageSize());
-        map.addAttribute("totalPage", result.getPageCount());
+        map.addAttribute("pageSize", pageResult.getNumberOfElements());
+        map.addAttribute("totalPage",pageResult.getTotalPages());
 
         return map;
     }

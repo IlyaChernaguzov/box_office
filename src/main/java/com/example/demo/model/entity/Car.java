@@ -2,6 +2,7 @@ package com.example.demo.model.entity;
 
 import com.example.demo.model.enums.CarStatus;
 import com.example.demo.model.enums.Colors;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 public class Car {
 
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
@@ -36,19 +38,23 @@ public class Car {
     @Column(name = "model_car")
     String modelCar;
 
-    @Column(name = "state_number")
+    @Column(name = "state_number", unique = true)
     String stateNumber;
 
+    @JsonIgnore
     @CreationTimestamp
     @Column(name = "created_at")
     LocalDateTime createdAt;
 
+    @JsonIgnore
     @Column(name = "updated_at")
     LocalDateTime updatedAt;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     CarStatus status = CarStatus.CREATE;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     Driver driver;
 
