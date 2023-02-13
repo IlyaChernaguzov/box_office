@@ -4,6 +4,7 @@ package com.example.demo.model.entity;
 import com.example.demo.model.enums.CarStatus;
 import com.example.demo.model.enums.DriverStatus;
 import com.example.demo.model.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,7 @@ import java.util.List;
 public class Driver {
 
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
@@ -38,15 +40,19 @@ public class Driver {
     String email;
 
     @CreationTimestamp
+    @JsonIgnore
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
     LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @JsonIgnore
     LocalDateTime updatedAt;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     DriverStatus status = DriverStatus.CREATE;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Car> cars;
 
