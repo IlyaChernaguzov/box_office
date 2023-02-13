@@ -7,6 +7,7 @@ import com.example.demo.model.dto.DriverDTO;
 import com.example.demo.model.entity.Car;
 import com.example.demo.model.entity.Driver;
 import com.example.demo.model.enums.Colors;
+import com.example.demo.model.enums.Gender;
 import com.example.demo.model.repository.CarRepository;
 import com.example.demo.model.repository.DriverRepository;
 import com.example.demo.service.DriverService;
@@ -42,7 +43,7 @@ public class CarServiseimplTest {
     private CarServiseimpl carService;
 
     @Mock
-    private DriverService driverService;
+    private DriverServiseimpl driverService;
 
     @Mock
     private CarRepository carRepository;
@@ -181,15 +182,13 @@ public class CarServiseimplTest {
     @Test
     public void addToDriver() {
 
-        DriverService driverService = mock(DriverService.class);
+//        DriverService driverService = mock(DriverService.class);
 
         Driver driver = new Driver();
         driver.setName("Ivan");
         driver.setEmail("test@mail.ru");
-        when(driverRepository.findByEmail(anyString())).thenReturn(Optional.of(driver));
-        when(driverService.getDriver(anyString())).thenReturn(driver); //- проверяем DriverService, если не сделаны тесты DriverService
-
-
+       // when(driverRepository.findByEmail(anyString())).thenReturn(Optional.of(driver));
+        when(driverService.getDriver("test@mail.ru")).thenReturn(driver); //- проверяем DriverService, если не сделаны тесты DriverService
 
         Car car = new Car();
         car.setBrandCar("BMW");
@@ -201,8 +200,16 @@ public class CarServiseimplTest {
 
         when(carRepository.save(any(Car.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        CarDTOResponse result = carService.addToDriver(car.getStateNumber(), driver.getEmail());
+        DriverDTO driverTest = new DriverDTO();
+        driverTest.setName("Ivan");
+        driverTest.setSurname("Ivanov");
+        driverTest.setGender(MALE);
+        driverTest.setEmail(driver.getEmail());
+
+        CarDTOResponse result = carService.addToDriver(car.getStateNumber(), driverTest.getEmail());
         assertEquals(car.getStateNumber(), result.getStateNumber());
+        assertEquals(driver.getEmail(), result.getDriverDTO().getEmail());
+
     }
 
     @Test(expected = CustomException.class)
@@ -216,8 +223,22 @@ public class CarServiseimplTest {
 
         when(carRepository.findByStateNumber(anyString())).thenThrow(CustomException.class);// anyString - любая строка
 
-        carService.addToDriver(car.getStateNumber(), "gggg");
+        carService.addToDriver(car.getStateNumber(), "test@mail.ru");
     }
+
+//    @Test(expected = CustomException.class)
+//    public void createDriver_exception() {
+//        DriverDTO test = new DriverDTO();
+//        test.setName("Ivan");
+//        test.setSurname("Ivanov");
+//        test.setGender(Gender.MALE);
+//        test.setEmail("test@mail.ru");
+//
+//        when(driverRepository.findByEmail(anyString())).thenThrow(CustomException.class);
+//
+//        driverService.create(test);
+//
+//    }
 
     @Test
     public void getAllCars() {
