@@ -1,6 +1,6 @@
 package com.example.demo.model.dto;
 
-import com.example.demo.model.enums.Gender;
+import com.example.demo.model.enums.Genre;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ public class DriverDTO {
 
     String name;
     String surname;
-    Gender gender;
+    Genre gender;
     String email;
 
 }

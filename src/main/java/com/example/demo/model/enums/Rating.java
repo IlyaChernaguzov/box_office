@@ -5,10 +5,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Gender {
+public enum Rating {
 
-    MALE("Men"),
-    FEMALE("Women");
+    RARS_0("0+"),
+    RARS_6("6+"),
+    RARS_12("12+"),
+    RARS_16("16+"),
+    RARS_18("18+");
 
     private final String description;
 

@@ -4,9 +4,9 @@ import com.example.demo.exceptions.CustomException;
 import com.example.demo.model.dto.CarDTORequest;
 import com.example.demo.model.dto.CarDTOResponse;
 import com.example.demo.model.dto.DriverDTO;
-import com.example.demo.model.entity.Car;
+import com.example.demo.model.entity.Movie;
 import com.example.demo.model.entity.Driver;
-import com.example.demo.model.enums.CarStatus;
+import com.example.demo.model.enums.MovieStatus;
 import com.example.demo.model.repository.CarRepository;
 import com.example.demo.service.CarService;
 import com.example.demo.service.DriverService;
@@ -14,7 +14,6 @@ import com.example.demo.utils.PaginationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -45,16 +44,16 @@ public class CarServiseimpl implements CarService {
                 }
         );
 
-        Car car = mapper.convertValue(carDTORequest, Car.class);//конвертируем запрос в сущность
+        Movie car = mapper.convertValue(carDTORequest, Movie.class);//конвертируем запрос в сущность
         car.setCreatedAt(LocalDateTime.now());// записываем время создания
-        Car save = carRepository.save(car);// сохроняем в бд
+        Movie save = carRepository.save(car);// сохроняем в бд
 
         return mapper.convertValue(save, CarDTOResponse.class);// конвертируем и возвращаем в виде ответа
     }
 
     @Override
     public CarDTOResponse update(CarDTORequest carDTORequest) {
-        Car car = getCar(carDTORequest.getStateNumber()); // создаем исключение "если ТС не найдено, при обновлении выскачит ошибка"
+        Movie car = getCar(carDTORequest.getStateNumber()); // создаем исключение "если ТС не найдено, при обновлении выскачит ошибка"
 
         car.setColorsCar(carDTORequest.getColorsCar() == null ? car.getColorsCar() : carDTORequest.getColorsCar()); // проверяем пришедшие данный на null с помощью "?", если null, то присваиваем прошлое значение. ":" - если не null, то присвиваем пришедшее значение
         car.setCarOld(carDTORequest.getCarOld() == null ? car.getCarOld() : carDTORequest.getCarOld());
@@ -62,15 +61,15 @@ public class CarServiseimpl implements CarService {
         car.setModelCar(carDTORequest.getModelCar() == null ? car.getModelCar() : carDTORequest.getModelCar());
         car.setStateNumber(carDTORequest.getStateNumber() == null ? car.getStateNumber() : carDTORequest.getStateNumber());
         car.setUpdatedAt(LocalDateTime.now());// записываем время обновления
-        car.setStatus(CarStatus.UPDATED);// записываем статус для наглядности
-        Car save = carRepository.save(car);// сохроняем в бд
+        car.setStatus(MovieStatus.UPDATED);// записываем статус для наглядности
+        Movie save = carRepository.save(car);// сохроняем в бд
 
         return mapper.convertValue(save, CarDTOResponse.class);// конвертируем и возвращаем в виде ответа
     }
 
     @Override
     public CarDTOResponse get(String stateNumber) {
-        Car car = getCar(stateNumber);
+        Movie car = getCar(stateNumber);
         DriverDTO driver = mapper.convertValue(car.getDriver(), DriverDTO.class);// конвертируем driver из бд в DriverDTO
         CarDTOResponse result = mapper.convertValue(car, CarDTOResponse.class);// конвертируем car из бд в CarDTOResponse - ответ
         result.setDriverDTO(driver);// устанавливаем водителя к ТС в ответе
@@ -80,15 +79,15 @@ public class CarServiseimpl implements CarService {
 
     @Override
     public void delete(String stateNumber) {
-        Car car = getCar(stateNumber);
+        Movie car = getCar(stateNumber);
 
-        car.setStatus(CarStatus.DELETED);// установить статут DELETED
+        car.setStatus(MovieStatus.DELETED);// установить статут DELETED
         car.setUpdatedAt(LocalDateTime.now());
 //        carRepository.delete(car);// полное удаление
         carRepository.save(car);
     }
 
-    private Car getCar(String stateNumber){
+    private Movie getCar(String stateNumber){
         return carRepository.findByStateNumber(stateNumber)
                 .orElseThrow(()-> new CustomException("Транспорт с рег.номером" + stateNumber + " не найден", HttpStatus.NOT_FOUND));// создаем исключение в отдельном методе getCar "если ТС не найдено, при обновлении выскачит ошибка"
 
@@ -97,9 +96,9 @@ public class CarServiseimpl implements CarService {
     @Override
     public CarDTOResponse addToDriver(String stateNumber, String email) {
         Driver driver = driverService.getDriver(email); // получаем Водителя
-        Car car = getCar(stateNumber);// получаем ТС
+        Movie car = getCar(stateNumber);// получаем ТС
         car.setDriver(driver);// присвоили водителя ТС
-        Car save = carRepository.save(car);// сохранили в бд
+        Movie save = carRepository.save(car);// сохранили в бд
         CarDTOResponse response = mapper.convertValue(save, CarDTOResponse.class); // конвентировали ТС в ответ JSON
         response.setDriverDTO(mapper.convertValue(driver, DriverDTO.class));// конвентировали Водителя в ответ JSON и добавили к JSON ТС
         return response;
@@ -108,7 +107,7 @@ public class CarServiseimpl implements CarService {
     @Override
     public ModelMap getAllCars(Integer page, Integer perPage, String sort, Sort.Direction order) {
         Pageable pageRequest = PaginationUtils.getPageRequest(page, perPage, sort, order);//используем метод getPageRequest класса PaginationUtils для проверки полученных параметров
-        Page<Car> pageResult = carRepository.findAll(pageRequest);// получает отсортированную страницу в формате Page из бд, согласно прешедшим параметрам. Из параметров Page можем вернуть только номер страницы и количество элементов
+        Page<Movie> pageResult = carRepository.findAll(pageRequest);// получает отсортированную страницу в формате Page из бд, согласно прешедшим параметрам. Из параметров Page можем вернуть только номер страницы и количество элементов
 
         List<CarDTORequest> content = pageResult.getContent().stream()// получаем все значения
                 .map(c -> mapper.convertValue(c, CarDTORequest.class))// конвентируем все значения в CarDTORequest

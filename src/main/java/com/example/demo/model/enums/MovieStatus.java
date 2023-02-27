@@ -5,12 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Colors {
+public enum MovieStatus {
 
-    BLACK,
-    WHITE,
-    GREEN,
-    BLUE,
-    GRY
+    CREATE,
+    UPDATED,
+    DELETED
 
 }

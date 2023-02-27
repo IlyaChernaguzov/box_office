@@ -1,7 +1,8 @@
 package com.example.demo.model.entity;
 
-import com.example.demo.model.enums.CarStatus;
-import com.example.demo.model.enums.Colors;
+import com.example.demo.model.enums.Genre;
+import com.example.demo.model.enums.MovieStatus;
+import com.example.demo.model.enums.Rating;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,36 +11,39 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "cars")
+@Table(name = "movie")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Car {
+public class Movie {
 
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "colors_car")
+    @Column(name = "name_movie", unique = true)
+    String nameMovie;
+
+    @Column(name = "duration_movie")
+    Integer durationMovie;
+
+    @Column(name = "start_movie")
+    LocalDateTime startRental;
+
+    @Column(name = "end_movie")
+    LocalDateTime endRental;
+
+    @Column(name = "rating_movie")
     @Enumerated(EnumType.STRING)
-    Colors colorsCar;
+    Rating ratingMovie;
 
-    @Column(name = "car_old")
-    String carOld;
-
-    @Column(name = "brand_car")
-    String brandCar;
-
-    @Column(name = "model_car")
-    String modelCar;
-
-    @Column(name = "state_number", unique = true)
-    String stateNumber;
+    @Column(name = "genre_movie")
+    @Enumerated(EnumType.STRING)
+    Genre genreMovie;
 
     @JsonIgnore
     @CreationTimestamp
@@ -52,7 +56,7 @@ public class Car {
 
     @JsonIgnore
     @Enumerated(EnumType.STRING)
-    CarStatus status = CarStatus.CREATE;
+    MovieStatus status = MovieStatus.CREATE;
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)

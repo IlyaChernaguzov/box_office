@@ -1,9 +1,8 @@
 package com.example.demo.model.entity;
 
 
-import com.example.demo.model.enums.CarStatus;
 import com.example.demo.model.enums.DriverStatus;
-import com.example.demo.model.enums.Gender;
+import com.example.demo.model.enums.Genre;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,7 +33,7 @@ public class Driver {
     String surname;
 
     @Enumerated(EnumType.STRING)
-    Gender gender;
+    Genre gender;
 
     @Column(name = "email", unique = true)
     String email;
@@ -54,6 +53,6 @@ public class Driver {
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
-    List<Car> cars;
+    List<Movie> cars;
 
 }

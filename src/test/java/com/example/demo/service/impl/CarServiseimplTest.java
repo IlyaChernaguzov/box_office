@@ -4,20 +4,16 @@ import com.example.demo.exceptions.CustomException;
 import com.example.demo.model.dto.CarDTORequest;
 import com.example.demo.model.dto.CarDTOResponse;
 import com.example.demo.model.dto.DriverDTO;
-import com.example.demo.model.entity.Car;
+import com.example.demo.model.entity.Movie;
 import com.example.demo.model.entity.Driver;
-import com.example.demo.model.enums.Colors;
-import com.example.demo.model.enums.Gender;
+import com.example.demo.model.enums.Rating;
 import com.example.demo.model.repository.CarRepository;
 import com.example.demo.model.repository.DriverRepository;
-import com.example.demo.service.DriverService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
@@ -25,12 +21,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.ui.ModelMap;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.demo.model.enums.Gender.MALE;
+import static com.example.demo.model.enums.Genre.MALE;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -71,11 +66,11 @@ public class CarServiseimplTest {
         CarDTORequest test = new CarDTORequest();// создаем объект
         test.setBrandCar("BMW");
         test.setCarOld("1990");
-        test.setColorsCar(Colors.BLACK);
+        test.setColorsCar(Rating.BLACK);
         test.setModelCar("X5");
         test.setStateNumber("f777ff77");
 
-        when(carRepository.save(any(Car.class)))
+        when(carRepository.save(any(Movie.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
         //when(carRepository.save(any(Car.class))).thenReturn(any(Car.class));// иммитация сохранения в базу. Т.к. репозиторий замокан.
 
@@ -90,7 +85,7 @@ public class CarServiseimplTest {
         CarDTORequest test = new CarDTORequest();
         test.setBrandCar("BMW");
         test.setCarOld("1990");
-        test.setColorsCar(Colors.BLACK);
+        test.setColorsCar(Rating.BLACK);
         test.setModelCar("X5");
         test.setStateNumber("f777ff77");
 
@@ -103,17 +98,17 @@ public class CarServiseimplTest {
     @Test
     public void update() {
 
-        Car test = new Car();
+        Movie test = new Movie();
         test.setBrandCar("BMW");
         test.setCarOld("1990");
-        test.setColorsCar(Colors.BLACK);
+        test.setColorsCar(Rating.BLACK);
         test.setModelCar("X5");
         test.setStateNumber("f777ff77");
 
 
         when(carRepository.findByStateNumber(anyString())).thenReturn(Optional.of(test));
 
-        when(carRepository.save(any(Car.class)))
+        when(carRepository.save(any(Movie.class)))
                 .thenAnswer(i -> i.getArguments()[0]);// иммитация сохранения в базу. Т.к. репозиторий замокан.
 
         CarDTORequest testForUpdate = new CarDTORequest();// создаем объект с новыми данными
@@ -135,7 +130,7 @@ public class CarServiseimplTest {
         CarDTORequest test = new CarDTORequest();
         test.setBrandCar("BMW");
         test.setCarOld("1990");
-        test.setColorsCar(Colors.BLACK);
+        test.setColorsCar(Rating.BLACK);
         test.setModelCar("X5");
         test.setStateNumber("f777ff77");
 
@@ -148,10 +143,10 @@ public class CarServiseimplTest {
     @Test
     public void get() {
 
-        Car test = new Car();
+        Movie test = new Movie();
         test.setBrandCar("BMW");
         test.setCarOld("1990");
-        test.setColorsCar(Colors.BLACK);
+        test.setColorsCar(Rating.BLACK);
         test.setModelCar("X5");
         test.setStateNumber("f777ff77");
 
@@ -166,11 +161,11 @@ public class CarServiseimplTest {
 
     @Test
     public void delete() {
-        Car test = new Car();
+        Movie test = new Movie();
         test.setStateNumber("f777ff77");
 
         when(carRepository.findByStateNumber(anyString())).thenReturn(Optional.of(test));
-        when(carRepository.save(any(Car.class)))
+        when(carRepository.save(any(Movie.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
 
         carService.delete("f777ff77");
@@ -190,15 +185,15 @@ public class CarServiseimplTest {
        // when(driverRepository.findByEmail(anyString())).thenReturn(Optional.of(driver));
         when(driverService.getDriver("test@mail.ru")).thenReturn(driver); //- проверяем DriverService, если не сделаны тесты DriverService
 
-        Car car = new Car();
+        Movie car = new Movie();
         car.setBrandCar("BMW");
         car.setCarOld("1990");
-        car.setColorsCar(Colors.BLACK);
+        car.setColorsCar(Rating.BLACK);
         car.setModelCar("X5");
         car.setStateNumber("f777ff77");
         when(carRepository.findByStateNumber(anyString())).thenReturn(Optional.of(car));
 
-        when(carRepository.save(any(Car.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(carRepository.save(any(Movie.class))).thenAnswer(i -> i.getArguments()[0]);
 
         DriverDTO driverTest = new DriverDTO();
         driverTest.setName("Ivan");
@@ -217,7 +212,7 @@ public class CarServiseimplTest {
         CarDTORequest car = new CarDTORequest();
         car.setBrandCar("BMW");
         car.setCarOld("1990");
-        car.setColorsCar(Colors.BLACK);
+        car.setColorsCar(Rating.BLACK);
         car.setModelCar("X5");
         car.setStateNumber("f777ff77");
 
@@ -247,12 +242,12 @@ public class CarServiseimplTest {
         String sort = "BrandCar";
         Sort.Direction order = Sort.Direction.DESC; //задаем значения пагинации
 
-        Car car = new Car();// создаем объект в бд
+        Movie car = new Movie();// создаем объект в бд
         car.setBrandCar("BMW"); //присваиваем значение
 
-        List<Car> cars = Collections.singletonList(car);// добовляем в коллекцию
+        List<Movie> cars = Collections.singletonList(car);// добовляем в коллекцию
 
-        Page<Car> pageResult = mock(Page.class); //мокаем Page
+        Page<Movie> pageResult = mock(Page.class); //мокаем Page
 
         when(carRepository.findAll(any(Pageable.class))).thenReturn(pageResult);
         when(pageResult.getContent()).thenReturn(cars);

@@ -5,10 +5,12 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum CarStatus {
+public enum Genre {
 
-    CREATE,
-    UPDATED,
-    DELETED
+    THRILLER,
+    DRAMA,
+    COMEDY,
+    HORROR,
+    DOCUMENTARY
 
 }

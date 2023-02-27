@@ -1,13 +1,9 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exceptions.CustomException;
-import com.example.demo.model.dto.CarDTORequest;
-import com.example.demo.model.dto.CarDTOResponse;
 import com.example.demo.model.dto.DriverDTO;
-import com.example.demo.model.entity.Car;
 import com.example.demo.model.entity.Driver;
-import com.example.demo.model.enums.Colors;
-import com.example.demo.model.enums.Gender;
+import com.example.demo.model.enums.Genre;
 import com.example.demo.model.repository.DriverRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -19,7 +15,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.ui.ModelMap;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +43,7 @@ public class DriverServiseimplTest {
         DriverDTO test = new DriverDTO();
         test.setName("Ivan");
         test.setSurname("Ivanov");
-        test.setGender(Gender.MALE);
+        test.setGender(Genre.MALE);
         test.setEmail("test@mail.ru");
 
         when(driverRepository.save(any(Driver.class)))
@@ -64,7 +59,7 @@ public class DriverServiseimplTest {
         DriverDTO test = new DriverDTO();
         test.setName("Ivan");
         test.setSurname("Ivanov");
-        test.setGender(Gender.MALE);
+        test.setGender(Genre.MALE);
         test.setEmail("test@mail.ru");
 
         when(driverRepository.findByEmail(anyString())).thenThrow(CustomException.class);
@@ -79,7 +74,7 @@ public class DriverServiseimplTest {
         Driver test = new Driver();
         test.setName("Ivan");
         test.setSurname("Ivanov");
-        test.setGender(Gender.MALE);
+        test.setGender(Genre.MALE);
         test.setEmail("test@mail.ru");
 
 
@@ -91,7 +86,7 @@ public class DriverServiseimplTest {
         DriverDTO testForUpdate = new DriverDTO();
         testForUpdate.setName("Alex");
         testForUpdate.setSurname("Petrov");
-        testForUpdate.setGender(Gender.MALE);
+        testForUpdate.setGender(Genre.MALE);
         testForUpdate.setEmail(test.getEmail());
 
         DriverDTO res = driverService.update(testForUpdate);
@@ -108,7 +103,7 @@ public class DriverServiseimplTest {
         DriverDTO test = new DriverDTO();
         test.setName("Ivan");
         test.setSurname("Ivanov");
-        test.setGender(Gender.MALE);
+        test.setGender(Genre.MALE);
         test.setEmail("test@mail.ru");
 
         when(driverRepository.findByEmail(anyString())).thenThrow(CustomException.class);// anyString - любая строка
@@ -123,7 +118,7 @@ public class DriverServiseimplTest {
         Driver test = new Driver();
         test.setName("Ivan");
         test.setSurname("Ivanov");
-        test.setGender(Gender.MALE);
+        test.setGender(Genre.MALE);
         test.setEmail("test@mail.ru");
 
         when(driverRepository.findByEmail(anyString())).thenReturn(Optional.of(test));// иммитирует бд, что при поиске по номеру вернет объект типа Optional
