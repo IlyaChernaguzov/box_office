@@ -5,7 +5,7 @@ import com.example.demo.model.dto.CarDTORequest;
 import com.example.demo.model.dto.CarDTOResponse;
 import com.example.demo.model.dto.DriverDTO;
 import com.example.demo.model.entity.Movie;
-import com.example.demo.model.entity.Driver;
+import com.example.demo.model.entity.Place;
 import com.example.demo.model.enums.MovieStatus;
 import com.example.demo.model.repository.CarRepository;
 import com.example.demo.service.CarService;
@@ -95,7 +95,7 @@ public class CarServiseimpl implements CarService {
 
     @Override
     public CarDTOResponse addToDriver(String stateNumber, String email) {
-        Driver driver = driverService.getDriver(email); // получаем Водителя
+        Place driver = driverService.getDriver(email); // получаем Водителя
         Movie car = getCar(stateNumber);// получаем ТС
         car.setDriver(driver);// присвоили водителя ТС
         Movie save = carRepository.save(car);// сохранили в бд

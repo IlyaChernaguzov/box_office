@@ -1,8 +1,8 @@
 package com.example.demo.model.entity;
 
 
-import com.example.demo.model.enums.DriverStatus;
-import com.example.demo.model.enums.Genre;
+import com.example.demo.model.enums.PlaceStatus;
+import com.example.demo.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,26 +17,24 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "drivers")
+@Table(name = "places")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Driver {
+public class Place {
 
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Long idPlace;
 
-    @Column(name = "name")
-    String name;
+    @Column(name = "row_number")
+    Integer rowNumber;
 
-    @Column(name = "sur_name")
-    String surname;
+    @Column(name = "place_number")
+    Integer placeNumber;
 
+    @Column(name = "place_status")
     @Enumerated(EnumType.STRING)
-    Genre gender;
-
-    @Column(name = "email", unique = true)
-    String email;
+    Status status;
 
     @CreationTimestamp
     @JsonIgnore
@@ -49,10 +47,10 @@ public class Driver {
 
     @JsonIgnore
     @Enumerated(EnumType.STRING)
-    DriverStatus status = DriverStatus.CREATE;
+    PlaceStatus placeStatus = PlaceStatus.CREATE;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
-    List<Movie> cars;
+    @ManyToOne(cascade = CascadeType.ALL)
+    Order order;
 
 }

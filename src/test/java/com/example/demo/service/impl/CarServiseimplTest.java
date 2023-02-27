@@ -5,7 +5,7 @@ import com.example.demo.model.dto.CarDTORequest;
 import com.example.demo.model.dto.CarDTOResponse;
 import com.example.demo.model.dto.DriverDTO;
 import com.example.demo.model.entity.Movie;
-import com.example.demo.model.entity.Driver;
+import com.example.demo.model.entity.Place;
 import com.example.demo.model.enums.Rating;
 import com.example.demo.model.repository.CarRepository;
 import com.example.demo.model.repository.DriverRepository;
@@ -179,7 +179,7 @@ public class CarServiseimplTest {
 
 //        DriverService driverService = mock(DriverService.class);
 
-        Driver driver = new Driver();
+        Place driver = new Place();
         driver.setName("Ivan");
         driver.setEmail("test@mail.ru");
        // when(driverRepository.findByEmail(anyString())).thenReturn(Optional.of(driver));

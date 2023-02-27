@@ -2,15 +2,14 @@ package com.example.demo.service.impl;
 
 import com.example.demo.exceptions.CustomException;
 import com.example.demo.model.dto.DriverDTO;
-import com.example.demo.model.entity.Driver;
-import com.example.demo.model.enums.DriverStatus;
+import com.example.demo.model.entity.Place;
+import com.example.demo.model.enums.PlaceStatus;
 import com.example.demo.model.repository.DriverRepository;
 import com.example.demo.service.DriverService;
 import com.example.demo.utils.PaginationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -36,9 +35,9 @@ public class DriverServiseimpl implements DriverService {
             }
     );
 
-        Driver driver = mapper.convertValue(driverDTO, Driver.class);
+        Place driver = mapper.convertValue(driverDTO, Place.class);
         driver.setCreatedAt(LocalDateTime.now());
-        Driver save = driverRepository.save(driver);
+        Place save = driverRepository.save(driver);
 
         return mapper.convertValue(save, DriverDTO.class);
 
@@ -60,38 +59,38 @@ public class DriverServiseimpl implements DriverService {
 
     @Override
     public DriverDTO update(DriverDTO driverDTO) {
-        Driver driver = getDriver(driverDTO.getEmail()); // создаем исключение "если Водитель не найдено, при обновлении выскачит ошибка"
+        Place driver = getDriver(driverDTO.getEmail()); // создаем исключение "если Водитель не найдено, при обновлении выскачит ошибка"
 
         driver.setName(driverDTO.getName() == null ? driver.getName() : driverDTO.getName()); // проверяем пришедшие данный на null с помощью "?". ":" - если не null, то присвиваем пришедшее значение
         driver.setSurname(driverDTO.getSurname() == null ? driver.getSurname() : driverDTO.getSurname());
         driver.setGender(driverDTO.getGender() == null ? driver.getGender() : driverDTO.getGender());
         driver.setEmail(driverDTO.getEmail() == null ? driver.getEmail() : driverDTO.getEmail());
         driver.setUpdatedAt(LocalDateTime.now());
-        driver.setStatus(DriverStatus.UPDATED);
-        Driver save = driverRepository.save(driver);
+        driver.setStatus(PlaceStatus.UPDATED);
+        Place save = driverRepository.save(driver);
 
         return mapper.convertValue(save, DriverDTO.class);
     }
 
     @Override
     public DriverDTO get(String email) {
-        Driver driver = getDriver(email);
+        Place driver = getDriver(email);
 
         return mapper.convertValue(driver, DriverDTO.class);
     }
 
     @Override
     public void delete(String email) {
-        Driver driver = getDriver(email);
+        Place driver = getDriver(email);
 
-        driver.setStatus(DriverStatus.DELETED);// установить статут DELETED
+        driver.setStatus(PlaceStatus.DELETED);// установить статут DELETED
         driver.setUpdatedAt(LocalDateTime.now());
 //        driverRepository.delete(driver);// полное удаление
         driverRepository.save(driver);
     }
 
     @Override
-    public Driver getDriver(String email){
+    public Place getDriver(String email){
         return driverRepository.findByEmail(email)
                 .orElseThrow(()-> new CustomException("Водитель с email: " + email + " не найден", HttpStatus.NOT_FOUND));
 
@@ -100,7 +99,7 @@ public class DriverServiseimpl implements DriverService {
     @Override
     public List<DriverDTO> getAllDrivers(Integer page, Integer perPage, String sort, Sort.Direction order) {
         Pageable pageRequest = PaginationUtils.getPageRequest(page, perPage, sort, order);//используем метод getPageRequest класса PaginationUtils для проверки полученных параметров
-        Page<Driver> pageResult = driverRepository.findAll(pageRequest);// получает отсортированную страницу в формате Page из бд, согласно прешедшим параметрам. Из параметров Page можем вернуть только номер страницы и количество элементов
+        Page<Place> pageResult = driverRepository.findAll(pageRequest);// получает отсортированную страницу в формате Page из бд, согласно прешедшим параметрам. Из параметров Page можем вернуть только номер страницы и количество элементов
 
         List<DriverDTO> collect = pageResult.getContent().stream()// получаем все значения
                 .map(c -> mapper.convertValue(c, DriverDTO.class))// конвентируем все значения в DriverDTO

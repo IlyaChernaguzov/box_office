@@ -1,8 +1,7 @@
 package com.example.demo.model.entity;
 
-import com.example.demo.model.enums.Genre;
+import com.example.demo.model.enums.CinemaStatus;
 import com.example.demo.model.enums.MovieStatus;
-import com.example.demo.model.enums.Rating;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,34 +15,29 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "movies")
+@Table(name = "cinemas")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Movie {
+public class Cinema {
 
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "name_movie", unique = true)
-    String nameMovie;
+    @Column(name = "name_cinema", unique = true)
+    String nameCinema;
 
-    @Column(name = "duration_movie")
-    Integer durationMovie;
+    @Column(name = "index_cinema")
+    String index;
 
-    @Column(name = "start_movie")
-    LocalDateTime startRental;
+    @Column(name = "city_cinema")
+    String city;
 
-    @Column(name = "end_movie")
-    LocalDateTime endRental;
+    @Column(name = "address_cinema")
+    String address;
 
-    @Column(name = "rating_movie")
-    @Enumerated(EnumType.STRING)
-    Rating ratingMovie;
-
-    @Column(name = "genre_movie")
-    @Enumerated(EnumType.STRING)
-    Genre genreMovie;
+    @Column(name = "quantity_halls")
+    Integer halls;
 
     @JsonIgnore
     @CreationTimestamp
@@ -56,10 +50,9 @@ public class Movie {
 
     @JsonIgnore
     @Enumerated(EnumType.STRING)
-    MovieStatus status = MovieStatus.CREATE;
+    CinemaStatus cinemaStatus = CinemaStatus.CREATE;
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     Session session;
-
 }

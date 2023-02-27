@@ -2,7 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.exceptions.CustomException;
 import com.example.demo.model.dto.DriverDTO;
-import com.example.demo.model.entity.Driver;
+import com.example.demo.model.entity.Place;
 import com.example.demo.model.enums.Genre;
 import com.example.demo.model.repository.DriverRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,7 +46,7 @@ public class DriverServiseimplTest {
         test.setGender(Genre.MALE);
         test.setEmail("test@mail.ru");
 
-        when(driverRepository.save(any(Driver.class)))
+        when(driverRepository.save(any(Place.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
 
         DriverDTO res = driverService.create(test);
@@ -71,7 +71,7 @@ public class DriverServiseimplTest {
     @Test
     public void update() {
 
-        Driver test = new Driver();
+        Place test = new Place();
         test.setName("Ivan");
         test.setSurname("Ivanov");
         test.setGender(Genre.MALE);
@@ -80,7 +80,7 @@ public class DriverServiseimplTest {
 
         when(driverRepository.findByEmail(anyString())).thenReturn(Optional.of(test));
 
-        when(driverRepository.save(any(Driver.class)))
+        when(driverRepository.save(any(Place.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
 
         DriverDTO testForUpdate = new DriverDTO();
@@ -115,7 +115,7 @@ public class DriverServiseimplTest {
     @Test
     public void get() {
 
-        Driver test = new Driver();
+        Place test = new Place();
         test.setName("Ivan");
         test.setSurname("Ivanov");
         test.setGender(Genre.MALE);
@@ -132,11 +132,11 @@ public class DriverServiseimplTest {
     @Test
     public void delete() {
 
-        Driver test = new Driver();
+        Place test = new Place();
         test.setEmail("test@mail.ru");
 
         when(driverRepository.findByEmail(anyString())).thenReturn(Optional.of(test));
-        when(driverRepository.save(any(Driver.class)))
+        when(driverRepository.save(any(Place.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
 
         driverService.delete("test@mail.ru");
@@ -153,12 +153,12 @@ public class DriverServiseimplTest {
         String sort = "BrandCar";
         Sort.Direction order = Sort.Direction.ASC;
 
-        Driver test = new Driver();
+        Place test = new Place();
         test.setEmail("test@mail.ru");
 
-        List<Driver> drivers = Collections.singletonList(test);
+        List<Place> drivers = Collections.singletonList(test);
 
-        Page<Driver> pageResult = mock(Page.class);
+        Page<Place> pageResult = mock(Page.class);
 
         when(driverRepository.findAll(any(Pageable.class))).thenReturn(pageResult);
         when(pageResult.getContent()).thenReturn(drivers);

@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.dto.DriverDTO;
-import com.example.demo.model.entity.Driver;
+import com.example.demo.model.entity.Place;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public interface DriverService {
 
     void delete(String email);
 
-    Driver getDriver(String email);
+    Place getDriver(String email);
 
     List<DriverDTO> getAllDrivers(Integer page, Integer perPage, String sort, Sort.Direction order);
 }

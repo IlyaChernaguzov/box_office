@@ -6,6 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(//описывает название проекта в svagger ui
-        info = @Info(title = "DEMO_JAVA", version = "v0.1"))
+        info = @Info(title = "BOX_OFFICE", version = "v0.1"))
 public class Api30Config {
 }
