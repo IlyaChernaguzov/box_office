@@ -18,5 +18,7 @@ public interface PlaceService {
 
     Place getPlace(Long idPlace);
 
+    PlaceDTO addToHall(Long idPlace, Integer numberHall);
+
     List<PlaceDTO> getAllPlace(Integer page, Integer perPage, String sort, Sort.Direction order);
 }

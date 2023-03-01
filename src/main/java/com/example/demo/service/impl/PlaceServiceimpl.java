@@ -3,12 +3,15 @@ package com.example.demo.service.impl;
 import com.example.demo.exceptions.CustomException;
 import com.example.demo.model.dto.HallDTO;
 import com.example.demo.model.dto.PlaceDTO;
+import com.example.demo.model.dto.SessionDTO;
 import com.example.demo.model.entity.Hall;
 import com.example.demo.model.entity.Place;
+import com.example.demo.model.entity.Session;
 import com.example.demo.model.enums.HallStatus;
 import com.example.demo.model.enums.PlaceStatus;
 import com.example.demo.model.repository.HallRepository;
 import com.example.demo.model.repository.PlaceRepository;
+import com.example.demo.service.HallService;
 import com.example.demo.service.PlaceService;
 import com.example.demo.utils.PaginationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +33,8 @@ import java.util.stream.Collectors;
 public class PlaceServiceimpl implements PlaceService {
 
     private final PlaceRepository placeRepository;
+
+    private final HallService hallService;
     private final ObjectMapper mapper;
 
     @Override
@@ -63,7 +68,10 @@ public class PlaceServiceimpl implements PlaceService {
     public PlaceDTO get(Long idPlace) {
 
         Place place = getPlace(idPlace);
-        return mapper.convertValue(place, PlaceDTO.class);
+        HallDTO hall = mapper.convertValue(place.getHall(), HallDTO.class);
+        PlaceDTO result = mapper.convertValue(place, PlaceDTO.class);
+        result.setHallDTO(hall);
+        return result;
     }
 
     @Override
@@ -81,6 +89,17 @@ public class PlaceServiceimpl implements PlaceService {
     public Place getPlace(Long idPlace) {
         return placeRepository.findById(idPlace)
                 .orElseThrow(()-> new CustomException("Место под номером: " + idPlace + " не найден", HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public PlaceDTO addToHall(Long idPlace, Integer numberHall) {
+        Hall hall = hallService.getHall(numberHall);
+        Place place = getPlace(idPlace);
+        place.setHall(hall);
+        Place save = placeRepository.save(place);
+        PlaceDTO response = mapper.convertValue(save, PlaceDTO.class);
+        response.setHallDTO(mapper.convertValue(hall, HallDTO.class));
+        return response;
     }
 
     @Override

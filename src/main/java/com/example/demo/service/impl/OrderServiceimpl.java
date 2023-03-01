@@ -40,8 +40,8 @@ public class OrderServiceimpl implements OrderService {
 
     @Override
     public OrderDTO create(OrderDTO orderDTO) {
-        orderRepository.findById(orderDTO.getId()).ifPresent(
-                c -> {throw new CustomException("Заказ под номером: " + orderDTO.getId() + " уже существует", HttpStatus.BAD_REQUEST);
+        orderRepository.findById(orderDTO.getIdOrder()).ifPresent(
+                c -> {throw new CustomException("Заказ под номером: " + orderDTO.getIdOrder() + " уже существует", HttpStatus.BAD_REQUEST);
                 }
         );
 
@@ -53,9 +53,9 @@ public class OrderServiceimpl implements OrderService {
 
     @Override
     public OrderDTO update(OrderDTO orderDTO) {
-        Order order = getOrder(orderDTO.getId());
+        Order order = getOrder(orderDTO.getIdOrder());
 
-        order.setId(orderDTO.getId() == null ? order.getId() : orderDTO.getId());
+        order.setIdOrder(orderDTO.getIdOrder() == null ? order.getIdOrder() : orderDTO.getIdOrder());
 //        order.setUser(orderDTO.getUserDTO() == null ? order.getUser() : orderDTO.getUserDTO());
 //        order.setPlace(orderDTO.getPlaceDTO() == null ? order.getPlace() : orderDTO.getPlaceDTO());
 //        order.setSession(orderDTO.getSessionDTO() == null ? order.getSession() : orderDTO.getSessionDTO());// ВОПРОС!
@@ -67,8 +67,8 @@ public class OrderServiceimpl implements OrderService {
     }
 
     @Override
-    public OrderDTO get(Long id) {
-        Order order = getOrder(id);
+    public OrderDTO get(Long idOrder) {
+        Order order = getOrder(idOrder);
         UserDTO user = mapper.convertValue(order.getUser(), UserDTO.class);
         PlaceDTO place = mapper.convertValue(order.getPlace(), PlaceDTO.class);
         SessionDTO session = mapper.convertValue(order.getSession(), SessionDTO.class);
@@ -81,9 +81,9 @@ public class OrderServiceimpl implements OrderService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long idOrder) {
 
-        Order order = getOrder(id);
+        Order order = getOrder(idOrder);
 
         order.setOrderStatus(OrderStatus.DELETED);
         order.setUpdatedAt(LocalDateTime.now());
@@ -93,16 +93,16 @@ public class OrderServiceimpl implements OrderService {
     }
 
     @Override
-    public Order getOrder(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(()-> new CustomException("Заказ под номером" + id + " не найден", HttpStatus.NOT_FOUND));
+    public Order getOrder(Long idOrder) {
+        return orderRepository.findById(idOrder)
+                .orElseThrow(()-> new CustomException("Заказ под номером" + idOrder + " не найден", HttpStatus.NOT_FOUND));
     }
 
     @Override
-    public OrderDTO addToUser(Long id, String email) {
+    public OrderDTO addToUser(Long idOrder, String email) {
 
         User user = userService.getUser(email);
-        Order order = getOrder(id);
+        Order order = getOrder(idOrder);
         order.setUser(user);
         Order save = orderRepository.save(order);
         OrderDTO response = mapper.convertValue(save, OrderDTO.class);
@@ -111,11 +111,11 @@ public class OrderServiceimpl implements OrderService {
     }
 
     @Override
-    public OrderDTO addToPlace(Long id, Long idPlace) {
+    public OrderDTO addToPlace(Long idOrder, Long idPlace) {
 
         Place place = placeService.getPlace(idPlace);
-        Order order = getOrder(id);
-        order.setPlace((List<Place>) place);//ВОПРОС
+        Order order = getOrder(idOrder);
+        order.setPlace(place);
         Order save = orderRepository.save(order);
         OrderDTO response = mapper.convertValue(save, OrderDTO.class);
         response.setPlaceDTO(mapper.convertValue(place, PlaceDTO.class));
@@ -123,10 +123,10 @@ public class OrderServiceimpl implements OrderService {
     }
 
     @Override
-    public OrderDTO addToSession(Long id, Long idSession) {
+    public OrderDTO addToSession(Long idOrder, Long idSession) {
 
         Session session = sessionService.getSession(idSession);
-        Order order = getOrder(id);
+        Order order = getOrder(idOrder);
         order.setSession(session);
         Order save = orderRepository.save(order);
         OrderDTO response = mapper.convertValue(save, OrderDTO.class);

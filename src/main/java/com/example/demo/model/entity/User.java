@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -46,11 +47,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     UserStatus userStatus = UserStatus.CREATE;
 
-//    @JsonIgnore
-//    @OneToOne(fetch = FetchType.EAGER)
-//    Order order;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Order> order;
 
-//    @JsonIgnore
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    Order order;
 }

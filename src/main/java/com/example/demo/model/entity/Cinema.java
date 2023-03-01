@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -53,6 +54,7 @@ public class Cinema {
     CinemaStatus cinemaStatus = CinemaStatus.CREATE;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
-    Session session;
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Session> session;
+
 }

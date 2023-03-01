@@ -1,10 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.model.dto.CarDTOResponse;
-import com.example.demo.model.dto.DriverDTO;
 import com.example.demo.model.dto.OrderDTO;
 import com.example.demo.model.entity.Order;
-import com.example.demo.model.entity.Place;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -14,17 +11,17 @@ public interface OrderService {
 
     OrderDTO update(OrderDTO orderDTO);
 
-    OrderDTO get(Long id);
+    OrderDTO get(Long idOrder);
 
-    void delete(Long id);
+    void delete(Long idOrder);
 
-    Order getOrder(Long id);
+    Order getOrder(Long idOrder);
 
-    OrderDTO addToUser (Long id, String email);
+    OrderDTO addToUser (Long idOrder, String email);
 
-    OrderDTO addToPlace (Long id, Long idPlace);
+    OrderDTO addToPlace (Long idOrder, Long idPlace);
 
-    OrderDTO addToSession (Long id, Long idSession);
+    OrderDTO addToSession (Long idOrder, Long idSession);
 
     List<OrderDTO> getAllOrder(Integer page, Integer perPage, String sort, Sort.Direction order);
 }

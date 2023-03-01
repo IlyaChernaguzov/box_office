@@ -23,7 +23,7 @@ public class Order {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Long idOrder;
 
     @CreationTimestamp
     @JsonIgnore
@@ -39,14 +39,14 @@ public class Order {
     OrderStatus orderStatus = OrderStatus.CREATE;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     User user;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
-    List<Place> place;
+    @ManyToOne(cascade = CascadeType.ALL)
+    Place place;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     Session session;
 }

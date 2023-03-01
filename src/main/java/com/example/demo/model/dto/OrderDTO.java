@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderDTO {
 
-    Long id;
+    Long idOrder;
     UserDTO userDTO;
     PlaceDTO placeDTO;
     SessionDTO sessionDTO;

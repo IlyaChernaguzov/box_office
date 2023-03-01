@@ -46,18 +46,18 @@ public class Session {
     SessionStatus sessionStatus = SessionStatus.CREATE;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     Cinema cinema;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     Hall hall;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     Movie movie;
 
-//    @JsonIgnore
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    Order order;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Order> order;
 }

@@ -10,6 +10,7 @@ import com.example.demo.model.repository.HallRepository;
 import com.example.demo.model.repository.MovieRepository;
 import com.example.demo.model.repository.SessionRepository;
 import com.example.demo.service.CinemaService;
+import com.example.demo.service.HallService;
 import com.example.demo.service.MovieService;
 import com.example.demo.service.SessionService;
 import com.example.demo.utils.PaginationUtils;
@@ -37,7 +38,7 @@ public class SessionServiceimpl implements SessionService {
 //    private final HallRepository hallRepository;
     private final MovieService movieService;
     private final CinemaService cinemaService;
-    private final HallServiceimpl hallServiceimpl;
+    private final HallService hallService;
     private final ObjectMapper mapper;
 
     @Override
@@ -126,7 +127,7 @@ public class SessionServiceimpl implements SessionService {
 
     @Override
     public SessionDTO addToHall(Long idSession, Integer numberHall) {
-        Hall hall = hallServiceimpl.getHall(numberHall);
+        Hall hall = hallService.getHall(numberHall);
         Session session = getSession(idSession);
         session.setHall(hall);
         Session save = sessionRepository.save(session);

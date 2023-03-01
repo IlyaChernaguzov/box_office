@@ -48,6 +48,10 @@ public class Hall {
     HallStatus hallStatus = HallStatus.CREATE;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
-    Session session;
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Session> session;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Place> place;
 }

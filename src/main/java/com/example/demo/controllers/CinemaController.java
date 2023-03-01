@@ -1,9 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.model.dto.CinemaDTO;
-import com.example.demo.model.dto.DriverDTO;
 import com.example.demo.service.CinemaService;
-import com.example.demo.service.DriverService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -1,13 +1,9 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exceptions.CustomException;
-import com.example.demo.model.dto.CinemaDTO;
 import com.example.demo.model.dto.HallDTO;
-import com.example.demo.model.entity.Cinema;
 import com.example.demo.model.entity.Hall;
-import com.example.demo.model.enums.CinemaStatus;
 import com.example.demo.model.enums.HallStatus;
-import com.example.demo.model.repository.DriverRepository;
 import com.example.demo.model.repository.HallRepository;
 import com.example.demo.service.HallService;
 import com.example.demo.utils.PaginationUtils;

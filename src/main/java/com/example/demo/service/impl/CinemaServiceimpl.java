@@ -2,15 +2,10 @@ package com.example.demo.service.impl;
 
 import com.example.demo.exceptions.CustomException;
 import com.example.demo.model.dto.CinemaDTO;
-import com.example.demo.model.dto.DriverDTO;
 import com.example.demo.model.entity.Cinema;
-import com.example.demo.model.entity.Place;
 import com.example.demo.model.enums.CinemaStatus;
-import com.example.demo.model.enums.PlaceStatus;
-import com.example.demo.model.repository.CarRepository;
 import com.example.demo.model.repository.CinemaRepository;
 import com.example.demo.service.CinemaService;
-import com.example.demo.service.DriverService;
 import com.example.demo.utils.PaginationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

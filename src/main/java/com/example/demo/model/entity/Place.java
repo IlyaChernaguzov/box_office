@@ -50,7 +50,11 @@ public class Place {
     PlaceStatus placeStatus = PlaceStatus.CREATE;
 
     @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Order> order;
+
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
-    Order order;
+    Hall hall;
 
 }

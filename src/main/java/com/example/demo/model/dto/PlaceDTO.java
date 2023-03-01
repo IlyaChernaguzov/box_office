@@ -19,4 +19,5 @@ public class PlaceDTO {
     Integer rowNumber;
     Integer placeNumber;
     Status status;
+    HallDTO hallDTO;
 }
