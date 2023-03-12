@@ -9,9 +9,11 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderDTO {
+public class OrderDTOResponse {
 
-    Integer placeNumber;
-    String sessionNumber;
+//    Long idOrder;
+    UserDTO userDTO;
+    PlaceDTORequest placeDTORequest;
+    SessionDTORequest sessionDTORequest;
     Booking booking;
 }

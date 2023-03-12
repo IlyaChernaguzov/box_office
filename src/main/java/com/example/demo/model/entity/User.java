@@ -34,6 +34,9 @@ public class User {
     @Column(name = "email", unique = true)
     String email;
 
+    @Column(name = "payInformation_users")
+    String payInformation;
+
     @CreationTimestamp
     @JsonIgnore
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
@@ -47,7 +50,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     UserStatus userStatus = UserStatus.CREATE;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Order> order;
 

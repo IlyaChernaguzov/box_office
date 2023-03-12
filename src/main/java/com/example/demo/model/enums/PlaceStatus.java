@@ -5,9 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Status {
+public enum PlaceStatus {
 
-    FREE,
-    RESERVATION,
-    BUY
+    CREATE,
+    UPDATED,
+    DELETED
+
 }

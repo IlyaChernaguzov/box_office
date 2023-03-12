@@ -5,10 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum DriverStatus {
+public enum Booking {
 
-    CREATE,
-    UPDATED,
-    DELETED
-
+    FREE,
+    RESERVATION,
+    BUY
 }

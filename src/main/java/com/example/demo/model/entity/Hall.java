@@ -47,11 +47,15 @@ public class Hall {
     @Enumerated(EnumType.STRING)
     HallStatus hallStatus = HallStatus.CREATE;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Session> session;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Place> place;
+
+//    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL)
+    Cinema cinema;
 }

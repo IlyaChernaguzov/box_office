@@ -1,13 +1,9 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exceptions.CustomException;
-import com.example.demo.model.dto.HallDTO;
 import com.example.demo.model.dto.MovieDTO;
-import com.example.demo.model.entity.Hall;
 import com.example.demo.model.entity.Movie;
-import com.example.demo.model.enums.HallStatus;
 import com.example.demo.model.enums.MovieStatus;
-import com.example.demo.model.repository.HallRepository;
 import com.example.demo.model.repository.MovieRepository;
 import com.example.demo.service.MovieService;
 import com.example.demo.utils.PaginationUtils;

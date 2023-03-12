@@ -26,6 +26,9 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idSession;
 
+    @Column(name = "session_number", unique = true)
+    String sessionNumber;
+
     @Column(name = "start_session")
     LocalDateTime startSession;
 

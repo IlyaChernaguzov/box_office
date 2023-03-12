@@ -5,19 +5,26 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SessionDTO {
+public class UserDTOResponseTicket {
 
-    Long idSession;
+    Long idOrder;
+
     LocalDateTime startSession;
     Integer price;
-    MovieDTO movieDTO;
-    CinemaDTO cinemaDTO;
-    HallDTO hallDTO;
+
+    String nameMovie;
+    Integer durationMovie;
+
+    String nameCinema;
+
+    Integer numberHall;
+
+    Integer rowNumber;
+    Integer placeNumberInRow;
 
 }

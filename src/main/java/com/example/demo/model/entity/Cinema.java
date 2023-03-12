@@ -57,4 +57,8 @@ public class Cinema {
     @OneToMany(cascade = CascadeType.ALL)
     List<Session> session;
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Hall> hall;
+
 }

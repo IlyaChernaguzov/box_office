@@ -1,27 +1,29 @@
 package com.example.demo.service;
 
-import com.example.demo.model.dto.OrderDTO;
+import com.example.demo.model.dto.*;
 import com.example.demo.model.entity.Order;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 public interface OrderService {
-    OrderDTO create(OrderDTO orderDTO);
+    OrderDTOResponse create(OrderDTO orderDTO);
 
-    OrderDTO update(OrderDTO orderDTO);
+    OrderDTOResponse update(OrderDTOUpdate orderDTOUpdate);
 
-    OrderDTO get(Long idOrder);
+    OrderDTOResponse get(Long idOrder);
 
     void delete(Long idOrder);
 
     Order getOrder(Long idOrder);
 
-    OrderDTO addToUser (Long idOrder, String email);
+    OrderDTOResponse addToUser (Long idOrder, String email);
 
-    OrderDTO addToPlace (Long idOrder, Long idPlace);
+    OrderDTOResponse addToPlace (Long idOrder, Integer placeNumber);
 
-    OrderDTO addToSession (Long idOrder, Long idSession);
+    OrderDTOResponse addToSession (Long idOrder, String sessionNumber);
 
-    List<OrderDTO> getAllOrder(Integer page, Integer perPage, String sort, Sort.Direction order);
+    List<OrderDTOResponse> getAllOrder(Integer page, Integer perPage, String sort, Sort.Direction order);
+
+    List<OrderDTOResponse> getAllOrderBySession (String sessionNumber);
 }

@@ -1,10 +1,14 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exceptions.CustomException;
-import com.example.demo.model.dto.HallDTO;
+import com.example.demo.model.dto.CinemaDTO;
+import com.example.demo.model.dto.HallDTORequest;
+import com.example.demo.model.dto.HallDTOResponse;
+import com.example.demo.model.entity.Cinema;
 import com.example.demo.model.entity.Hall;
 import com.example.demo.model.enums.HallStatus;
 import com.example.demo.model.repository.HallRepository;
+import com.example.demo.service.CinemaService;
 import com.example.demo.service.HallService;
 import com.example.demo.utils.PaginationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,39 +30,44 @@ import java.util.stream.Collectors;
 public class HallServiceimpl implements HallService {
 
     private final HallRepository hallRepository;
+
+    private final CinemaService cinemaService;
     private final ObjectMapper mapper;
 
     @Override
-    public HallDTO create(HallDTO hallDTO) {
-        hallRepository.findByNumberHall(hallDTO.getNumberHall()).ifPresent(
-                c -> {throw new CustomException("Зал с номером: " + hallDTO.getNumberHall() + " уже существует", HttpStatus.BAD_REQUEST);
+    public HallDTOResponse create(HallDTORequest hallDTORequest) {
+        hallRepository.findByNumberHall(hallDTORequest.getNumberHall()).ifPresent(
+                c -> {throw new CustomException("Зал с номером: " + hallDTORequest.getNumberHall() + " уже существует", HttpStatus.BAD_REQUEST);
                 }
         );
 
-        Hall hall = mapper.convertValue(hallDTO, Hall.class);
+        Hall hall = mapper.convertValue(hallDTORequest, Hall.class);
         hall.setCreatedAt(LocalDateTime.now());
         Hall save = hallRepository.save(hall);
-        return mapper.convertValue(save, HallDTO.class);
+        return mapper.convertValue(save, HallDTOResponse.class);
     }
 
     @Override
-    public HallDTO update(HallDTO hallDTO) {
-        Hall hall = getHall(hallDTO.getNumberHall());
+    public HallDTOResponse update(HallDTORequest hallDTORequest) {
+        Hall hall = getHall(hallDTORequest.getNumberHall());
 
-        hall.setNumberHall(hallDTO.getNumberHall() == null ? hall.getNumberHall() : hallDTO.getNumberHall());
-        hall.setPlaces(hallDTO.getPlaces() == null ? hall.getPlaces() : hallDTO.getPlaces());
-        hall.setRows(hallDTO.getRows() == null ? hall.getRows() : hallDTO.getRows());
+        hall.setNumberHall(hallDTORequest.getNumberHall() == null ? hall.getNumberHall() : hallDTORequest.getNumberHall());
+        hall.setPlaces(hallDTORequest.getPlaces() == null ? hall.getPlaces() : hallDTORequest.getPlaces());
+        hall.setRows(hallDTORequest.getRows() == null ? hall.getRows() : hallDTORequest.getRows());
         hall.setUpdatedAt(LocalDateTime.now());
         hall.setHallStatus(HallStatus.UPDATED);
         Hall save = hallRepository.save(hall);
-        return mapper.convertValue(save, HallDTO.class);
+        return mapper.convertValue(save, HallDTOResponse.class);
     }
 
     @Override
-    public HallDTO get(Integer numberHall) {
+    public HallDTOResponse get(Integer numberHall) {
 
         Hall hall = getHall(numberHall);
-        return mapper.convertValue(hall, HallDTO.class);
+        CinemaDTO cinema = mapper.convertValue(hall.getCinema(), CinemaDTO.class);
+        HallDTOResponse result = mapper.convertValue(hall, HallDTOResponse.class);
+        result.setCinemaDTO(cinema);
+        return result;
     }
 
     @Override
@@ -79,12 +88,23 @@ public class HallServiceimpl implements HallService {
     }
 
     @Override
-    public List<HallDTO> getAllHall(Integer page, Integer perPage, String sort, Sort.Direction order) {
+    public HallDTOResponse addToCinema(Integer numberHall, String nameCinema) {
+        Cinema cinema = cinemaService.getCinema(nameCinema);
+        Hall hall = getHall(numberHall);
+        hall.setCinema(cinema);
+        Hall save = hallRepository.save(hall);
+        HallDTOResponse response = mapper.convertValue(save, HallDTOResponse.class);
+        response.setCinemaDTO(mapper.convertValue(cinema, CinemaDTO.class));
+        return response;
+    }
+
+    @Override
+    public List<HallDTOResponse> getAllHall(Integer page, Integer perPage, String sort, Sort.Direction order) {
         Pageable pageRequest = PaginationUtils.getPageRequest(page, perPage, sort, order);
         Page<Hall> pageResult = hallRepository.findAll(pageRequest);
 
-        List<HallDTO> collect = pageResult.getContent().stream()
-                .map(c -> mapper.convertValue(c, HallDTO.class))
+        List<HallDTOResponse> collect = pageResult.getContent().stream()
+                .map(c -> mapper.convertValue(c, HallDTOResponse.class))
                 .collect(Collectors.toList());
 
         return collect;

@@ -1,24 +1,26 @@
 package com.example.demo.service;
 
-import com.example.demo.model.dto.DriverDTO;
-import com.example.demo.model.dto.PlaceDTO;
+import com.example.demo.model.dto.PlaceDTORequest;
+import com.example.demo.model.dto.PlaceDTOResponse;
 import com.example.demo.model.entity.Place;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 public interface PlaceService {
-    PlaceDTO create(PlaceDTO placeDTO);
+    PlaceDTOResponse create(PlaceDTORequest placeDTORequest);
 
-    PlaceDTO update(PlaceDTO placeDTO);
+    PlaceDTOResponse update(PlaceDTORequest placeDTORequest);
 
-    PlaceDTO get(Long idPlace);
+    PlaceDTOResponse get(Integer placeNumber);
 
-    void delete(Long idPlace);
+    void delete(Integer placeNumber);
 
-    Place getPlace(Long idPlace);
+    Place getPlace(Integer placeNumber);
 
-    PlaceDTO addToHall(Long idPlace, Integer numberHall);
+    PlaceDTOResponse addToHall(Integer placeNumber, Integer numberHall);
 
-    List<PlaceDTO> getAllPlace(Integer page, Integer perPage, String sort, Sort.Direction order);
+    List<PlaceDTORequest> getAllPlace(Integer page, Integer perPage, String sort, Sort.Direction order);
+
+    List<PlaceDTORequest> getAllPlaceByHall (Integer numberHall);
 }

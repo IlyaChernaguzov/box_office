@@ -1,30 +1,29 @@
 package com.example.demo.service;
 
-import com.example.demo.model.dto.DriverDTO;
-import com.example.demo.model.dto.OrderDTO;
-import com.example.demo.model.dto.SessionDTO;
-import com.example.demo.model.entity.Place;
+import com.example.demo.model.dto.SessionDTORequest;
+import com.example.demo.model.dto.SessionDTOResponse;
+import com.example.demo.model.dto.SessionDTOUpdate;
 import com.example.demo.model.entity.Session;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 public interface SessionService {
-    SessionDTO create(SessionDTO sessionDTO);
+    SessionDTOResponse create(SessionDTORequest sessionDTORequest);
 
-    SessionDTO update(SessionDTO sessionDTO);
+    SessionDTOResponse update(SessionDTOUpdate sessionDTOUpdate);
 
-    SessionDTO get(Long idSession);
+    SessionDTOResponse get(String sessionNumber);
 
-    void delete(Long idSession);
+    void delete(String sessionNumber);
 
-    Session getSession(Long idSession);
+    Session getSession(String sessionNumber);
 
-    SessionDTO addToMovie (Long idSession, String nameMovie);
+    SessionDTOResponse addToMovie (String sessionNumber, String nameMovie);
 
-    SessionDTO addToCinema (Long idSession, String nameCinema);
+    SessionDTOResponse addToCinema (String sessionNumber, String nameCinema);
 
-    SessionDTO addToHall (Long idSession, Integer numberHall);
+    SessionDTOResponse addToHall (String sessionNumber, Integer numberHall);
 
-    List<SessionDTO> getAllSession(Integer page, Integer perPage, String sort, Sort.Direction order);
+    List<SessionDTOResponse> getAllSession(Integer page, Integer perPage, String sort, Sort.Direction order);
 }

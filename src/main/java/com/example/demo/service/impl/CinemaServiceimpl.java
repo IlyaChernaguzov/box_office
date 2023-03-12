@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class CinemaServiceimpl implements CinemaService {
 
     private final CinemaRepository cinemaRepository;
+
     private final ObjectMapper mapper;
 
     @Override

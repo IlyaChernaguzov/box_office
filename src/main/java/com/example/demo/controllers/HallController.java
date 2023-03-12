@@ -1,8 +1,7 @@
 package com.example.demo.controllers;
 
-import com.example.demo.model.dto.CinemaDTO;
-import com.example.demo.model.dto.HallDTO;
-import com.example.demo.service.CinemaService;
+import com.example.demo.model.dto.HallDTORequest;
+import com.example.demo.model.dto.HallDTOResponse;
 import com.example.demo.service.HallService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,21 +23,21 @@ public class HallController {
 
     @PostMapping
     @Operation(summary = "Создание зала")// описание в svagger ui
-    private ResponseEntity<HallDTO> createHall(@RequestBody HallDTO hallDTO){
-        return ResponseEntity.ok(hallService.create(hallDTO));// обертка ответа со статусом ок
+    private ResponseEntity<HallDTOResponse> createHall(@RequestBody HallDTORequest hallDTORequest){
+        return ResponseEntity.ok(hallService.create(hallDTORequest));// обертка ответа со статусом ок
 
     }
 
     @PutMapping
     @Operation(summary = "Обновление данных зала")
-    private ResponseEntity<HallDTO> updateHall(@RequestBody HallDTO hallDTO){
-        return ResponseEntity.ok(hallService.update(hallDTO));
+    private ResponseEntity<HallDTOResponse> updateHall(@RequestBody HallDTORequest hallDTORequest){
+        return ResponseEntity.ok(hallService.update(hallDTORequest));
 
     }
 
     @GetMapping
     @Operation(summary = "Посмотреть зал")
-    private ResponseEntity<HallDTO> getHall(@RequestParam Integer numberHall){
+    private ResponseEntity<HallDTOResponse> getHall(@RequestParam Integer numberHall){
         return ResponseEntity.ok(hallService.get(numberHall));
 
     }
@@ -51,12 +50,19 @@ public class HallController {
 
     }
 
+    @PostMapping("/hallToCinema")
+    @Operation(summary = "Присваивание залу кинотеатр")
+    private ResponseEntity<HallDTOResponse> addToCinema(@RequestBody Integer numberHall, @RequestParam String nameCinema) {
+        return ResponseEntity.ok(hallService.addToCinema(numberHall, nameCinema));// обертка ответа со статусом ок
+
+    }
+
     @GetMapping("/all")// пагинация и сортировка
     @Operation(summary = "Сортировать залы")
-    public List<HallDTO> getAllHall(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                        @RequestParam(required = false, defaultValue = "10") Integer perPage,
-                                        @RequestParam(required = false, defaultValue = "numberHall") String sort,
-                                        @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
+    public List<HallDTOResponse> getAllHall(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                            @RequestParam(required = false, defaultValue = "10") Integer perPage,
+                                            @RequestParam(required = false, defaultValue = "numberHall") String sort,
+                                            @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
         return hallService.getAllHall(page, perPage, sort, order);
 
     }

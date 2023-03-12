@@ -1,8 +1,8 @@
 package com.example.demo.controllers;
 
-import com.example.demo.model.dto.OrderDTO;
-import com.example.demo.model.dto.SessionDTO;
-import com.example.demo.service.OrderService;
+import com.example.demo.model.dto.SessionDTORequest;
+import com.example.demo.model.dto.SessionDTOResponse;
+import com.example.demo.model.dto.SessionDTOUpdate;
 import com.example.demo.service.SessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,61 +24,62 @@ public class SessionController {
 
     @PostMapping
     @Operation(summary = "Создание сеанса")// описание в svagger ui
-    private ResponseEntity<SessionDTO> createOrder(@RequestBody SessionDTO sessionDTO){
-        return ResponseEntity.ok(sessionService.create(sessionDTO));// обертка ответа со статусом ок
+    private ResponseEntity<SessionDTOResponse> createSession(@RequestBody SessionDTORequest sessionDTORequest){
+        return ResponseEntity.ok(sessionService.create(sessionDTORequest));// обертка ответа со статусом ок
 
     }
 
     @PutMapping
     @Operation(summary = "Обновление данных сеанса")
-    private ResponseEntity<SessionDTO> updateOrder(@RequestBody SessionDTO sessionDTO){
-        return ResponseEntity.ok(sessionService.update(sessionDTO));
+    private ResponseEntity<SessionDTOResponse> updateSession(@RequestBody SessionDTOUpdate sessionDTOUpdate){
+        return ResponseEntity.ok(sessionService.update(sessionDTOUpdate));
 
     }
 
     @GetMapping
     @Operation(summary = "Посмотреть сеанс")
-    private ResponseEntity<SessionDTO> getOrder(@RequestParam Long idSession){//возвращает именно ответ CarDTOResponse
-        return ResponseEntity.ok(sessionService.get(idSession));
+    private ResponseEntity<SessionDTOResponse> getSession(@RequestParam String sessionNumber){//возвращает именно ответ CarDTOResponse
+        return ResponseEntity.ok(sessionService.get(sessionNumber));
 
     }
 
     @DeleteMapping
     @Operation(summary = "Удаление сеанса")
-    private ResponseEntity<HttpStatus> deleteOrder(@RequestParam Long idSession){
-        sessionService.delete(idSession);
+    private ResponseEntity<HttpStatus> deleteSession(@RequestParam String sessionNumber){
+        sessionService.delete(sessionNumber);
         return ResponseEntity.ok().build();
 
     }
 
     @PostMapping("/sessionToCinema")
     @Operation(summary = "Присваивание сеансу кинотеатр")
-    private ResponseEntity<SessionDTO> addToCinema(@RequestBody Long idSession, @RequestParam String nameCinema){
-        return ResponseEntity.ok(sessionService.addToCinema(idSession, nameCinema));// обертка ответа со статусом ок
+    private ResponseEntity<SessionDTOResponse> addToCinema(@RequestBody String sessionNumber, @RequestParam String nameCinema){
+        return ResponseEntity.ok(sessionService.addToCinema(sessionNumber, nameCinema));// обертка ответа со статусом ок
 
     }
 
     @PostMapping("/sessionToMovie")
     @Operation(summary = "Присваивание сеансу фильма")
-    private ResponseEntity<SessionDTO> addToMovie(@RequestBody Long idSession, @RequestParam  String nameMovie){
-        return ResponseEntity.ok(sessionService.addToMovie(idSession, nameMovie));// обертка ответа со статусом ок
+    private ResponseEntity<SessionDTOResponse> addToMovie(@RequestBody String sessionNumber, @RequestParam  String nameMovie){
+        return ResponseEntity.ok(sessionService.addToMovie(sessionNumber, nameMovie));// обертка ответа со статусом ок
 
     }
 
     @PostMapping("/sessionToHall")
     @Operation(summary = "Присваивание сеансу зала")
-    private ResponseEntity<SessionDTO> addToHall(@RequestBody Long idSession, @RequestParam Integer numberHall){
-        return ResponseEntity.ok(sessionService.addToHall(idSession, numberHall));// обертка ответа со статусом ок
+    private ResponseEntity<SessionDTOResponse> addToHall(@RequestBody String sessionNumber, @RequestParam Integer numberHall){
+        return ResponseEntity.ok(sessionService.addToHall(sessionNumber, numberHall));// обертка ответа со статусом ок
 
     }
 
     @GetMapping("/all")// пагинация и сортировка
     @Operation(summary = "Сортировать сеансы")
-    public List<SessionDTO> getAllSession(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                      @RequestParam(required = false, defaultValue = "10") Integer perPage,
-                                      @RequestParam(required = false, defaultValue = "idSession") String sort,
-                                      @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
+    public List<SessionDTOResponse> getAllSession(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                                 @RequestParam(required = false, defaultValue = "10") Integer perPage,
+                                                 @RequestParam(required = false, defaultValue = "idSession") String sort,
+                                                 @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
         return sessionService.getAllSession(page, perPage, sort, order);
 
     }
+
 }

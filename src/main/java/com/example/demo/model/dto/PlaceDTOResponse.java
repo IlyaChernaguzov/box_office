@@ -5,15 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Column;
-
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDTO {
+public class PlaceDTOResponse extends PlaceDTORequest{
 
-    String name;
-    Integer age;
-    String email;
-    String payInformation;
+    HallDTORequest hallDTORequest;
+
 }

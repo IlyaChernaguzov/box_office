@@ -1,7 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.model.dto.CinemaDTO;
-import com.example.demo.model.dto.UserDTO;
+import com.example.demo.model.dto.*;
 import com.example.demo.service.CinemaService;
 import com.example.demo.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,4 +59,42 @@ public class UserController {
         return userService.getAllUser(page, perPage, sort, order);
 
     }
+
+    @GetMapping("/allOrderBySession")// пагинация и сортировка
+    @Operation(summary = "Получение пользователем списка мест")
+    public List<UserDTOResponsePlace> getOrderBySession(@RequestParam String sessionNumber){
+        return userService.getAllOrderBySession(sessionNumber);
+
+    }
+
+    @GetMapping("/allSessionByCinema")// пагинация и сортировка
+    @Operation(summary = "Получение пользователем списка сеансов")
+    public List<UserDTOResponseSession> getSessionByCinema(@RequestParam String nameCinema){
+        return userService.getAllSessionByCinema(nameCinema);
+
+    }
+
+    @GetMapping("/getTicket")
+    @Operation(summary = "Получение билета")
+    private ResponseEntity<UserDTOResponseTicket> getTicket(@RequestParam String sessionNumber, @RequestParam Integer placeNumber){
+        return ResponseEntity.ok(userService.getTicket(sessionNumber, placeNumber));
+
+    }
+
+//    @PostMapping("/userGetPlace")
+//    @Operation(summary = "Получение пользователем списка мест")// описание в svagger ui
+//    private ResponseEntity<UserDTOResponsePlace> userGetPlace(@RequestBody UserDTORequestPlace userDTORequestPlace){
+//        return ResponseEntity.ok(userService.getPlace(userDTORequestPlace));
+//
+//
+//    }
+//
+//    @PostMapping("/userBooking")
+//    @Operation(summary = "Бронирование пользователем места")// описание в svagger ui
+//    private ResponseEntity<UserDTOResponseBooking> userBookingPlace(@RequestBody UserDTORequestBooking userDTORequestBooking){
+//        return ResponseEntity.ok(userService.bookingPlace(userDTORequestBooking));// обертка ответа со статусом ок
+//
+//    }
+
+
 }

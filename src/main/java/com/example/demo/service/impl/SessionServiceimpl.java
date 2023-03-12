@@ -3,11 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.exceptions.CustomException;
 import com.example.demo.model.dto.*;
 import com.example.demo.model.entity.*;
-import com.example.demo.model.enums.OrderStatus;
 import com.example.demo.model.enums.SessionStatus;
-import com.example.demo.model.repository.CinemaRepository;
-import com.example.demo.model.repository.HallRepository;
-import com.example.demo.model.repository.MovieRepository;
 import com.example.demo.model.repository.SessionRepository;
 import com.example.demo.service.CinemaService;
 import com.example.demo.service.HallService;
@@ -42,53 +38,57 @@ public class SessionServiceimpl implements SessionService {
     private final ObjectMapper mapper;
 
     @Override
-    public SessionDTO create(SessionDTO sessionDTO) {
-        sessionRepository.findById(sessionDTO.getIdSession()).ifPresent(
-                c -> {throw new CustomException("Сеанс под номером: " + sessionDTO.getIdSession() + " уже существует", HttpStatus.BAD_REQUEST);
+    public SessionDTOResponse create(SessionDTORequest sessionDTORequest) {
+        sessionRepository.findBySessionNumber(sessionDTORequest.getSessionNumber()).ifPresent(
+                c -> {throw new CustomException("Сеанс под номером: " + sessionDTORequest.getSessionNumber() + " уже существует", HttpStatus.BAD_REQUEST);
                 }
         );
 
-        Session session = mapper.convertValue(sessionDTO, Session.class);
+        Session session = mapper.convertValue(sessionDTORequest, Session.class);
         session.setCreatedAt(LocalDateTime.now());
         Session save = sessionRepository.save(session);
-        return mapper.convertValue(save, SessionDTO.class);
+        return mapper.convertValue(save, SessionDTOResponse.class);
     }
 
     @Override
-    public SessionDTO update(SessionDTO sessionDTO) {
-        Session session = getSession(sessionDTO.getIdSession());
+    public SessionDTOResponse update(SessionDTOUpdate sessionDTOUpdate) {
+        Session session = getSession(sessionDTOUpdate.getSessionNumber());
 
-        session.setIdSession(sessionDTO.getIdSession() == null ? session.getIdSession() : sessionDTO.getIdSession());// ВОПРОС!
-        session.setStartSession(sessionDTO.getStartSession() == null ? session.getStartSession() : sessionDTO.getStartSession());
-        session.setPrice(sessionDTO.getPrice() == null ? session.getPrice() : sessionDTO.getPrice());
-//        session.setMovie(sessionDTO.getMovieDTO() == null ? session.getMovie() : sessionDTO.getMovieDTO());
-//        session.setCinema(sessionDTO.getCinemaDTO() == null ? session.getCinema() : sessionDTO.getCinemaDTO());
-//        session.setHall(sessionDTO.getHallDTO() == null ? session.getHall() : sessionDTO.getHallDTO());// ВОПРОС!
+        session.setSessionNumber(sessionDTOUpdate.getSessionNumber() == null ? session.getSessionNumber() : sessionDTOUpdate.getSessionNumber());// ВОПРОС!
+        session.setStartSession(sessionDTOUpdate.getStartSession() == null ? session.getStartSession() : sessionDTOUpdate.getStartSession());
+        session.setPrice(sessionDTOUpdate.getPrice() == null ? session.getPrice() : sessionDTOUpdate.getPrice());
+        session.setMovie(sessionDTOUpdate.getNameMovie() == null ? session.getMovie() : movieService.getMovie(sessionDTOUpdate.getNameMovie()));
+        session.setCinema(sessionDTOUpdate.getNameCinema() == null ? session.getCinema() : cinemaService.getCinema(sessionDTOUpdate.getNameCinema()));
+        session.setHall(sessionDTOUpdate.getNumberHall() == null ? session.getHall() : hallService.getHall(sessionDTOUpdate.getNumberHall()));// ВОПРОС!
+//        order.setUser(orderDTO.getEmail() == null ? order.getUser() : userService.getUser(orderDTO.getEmail()));
+//        order.setPlace(orderDTO.getPlaceNumber() == null ? order.getPlace() : placeService.getPlace(orderDTO.getPlaceNumber()));
+//        order.setSession(orderDTO.getSessionNumber() == null ? order.getSession() : sessionService.getSession(orderDTO.getSessionNumber()));
         session.setUpdatedAt(LocalDateTime.now());
         session.setSessionStatus(SessionStatus.UPDATED);
         Session save = sessionRepository.save(session);
+        SessionDTOResponse response = get(save.getSessionNumber());
 
-        return mapper.convertValue(save, SessionDTO.class);
+        return response;
     }
 
     @Override
-    public SessionDTO get(Long idSession) {
-        Session session = getSession(idSession);
+    public SessionDTOResponse get(String sessionNumber) {
+        Session session = getSession(sessionNumber);
         MovieDTO movie = mapper.convertValue(session.getMovie(), MovieDTO.class);
         CinemaDTO cinema = mapper.convertValue(session.getCinema(), CinemaDTO.class);
-        HallDTO hall = mapper.convertValue(session.getHall(), HallDTO.class);
-        SessionDTO result = mapper.convertValue(session, SessionDTO.class);
+        HallDTORequest hall = mapper.convertValue(session.getHall(), HallDTORequest.class);
+        SessionDTOResponse result = mapper.convertValue(session, SessionDTOResponse.class);
         result.setMovieDTO(movie);
         result.setCinemaDTO(cinema);
-        result.setHallDTO(hall);// ВОПРОС!
+        result.setHallDTORequest(hall);// ВОПРОС!
 
         return result;
     }
 
     @Override
-    public void delete(Long idSession) {
+    public void delete(String sessionNumber) {
 
-        Session session = getSession(idSession);
+        Session session = getSession(sessionNumber);
 
         session.setSessionStatus(SessionStatus.DELETED);
         session.setUpdatedAt(LocalDateTime.now());
@@ -98,51 +98,55 @@ public class SessionServiceimpl implements SessionService {
     }
 
     @Override
-    public Session getSession(Long idSession) {
-        return sessionRepository.findById(idSession)
-                .orElseThrow(()-> new CustomException("Сеанс под номером" + idSession + " не найден", HttpStatus.NOT_FOUND));
+    public Session getSession(String sessionNumber) {
+        return sessionRepository.findBySessionNumber(sessionNumber)
+                .orElseThrow(()-> new CustomException("Сеанс под номером " + sessionNumber + " не найден", HttpStatus.NOT_FOUND));
     }
 
     @Override
-    public SessionDTO addToMovie(Long idSession, String nameMovie) {
+    public SessionDTOResponse addToMovie(String sessionNumber, String nameMovie) {
         Movie movie = movieService.getMovie(nameMovie);
-        Session session = getSession(idSession);
+        Session session = getSession(sessionNumber);
         session.setMovie(movie);
         Session save = sessionRepository.save(session);
-        SessionDTO response = mapper.convertValue(save, SessionDTO.class);
-        response.setMovieDTO(mapper.convertValue(movie, MovieDTO.class));
+//        SessionDTOResponse response = mapper.convertValue(save, SessionDTOResponse.class);
+//        response.setMovieDTO(mapper.convertValue(movie, MovieDTO.class));
+        SessionDTOResponse response = get(save.getSessionNumber());
         return response;
     }
 
     @Override
-    public SessionDTO addToCinema(Long idSession, String nameCinema) {
+    public SessionDTOResponse addToCinema(String sessionNumber, String nameCinema) {
         Cinema cinema = cinemaService.getCinema(nameCinema);
-        Session session = getSession(idSession);
+        Session session = getSession(sessionNumber);
         session.setCinema(cinema);
         Session save = sessionRepository.save(session);
-        SessionDTO response = mapper.convertValue(save, SessionDTO.class);
-        response.setCinemaDTO(mapper.convertValue(cinema, CinemaDTO.class));
+//        SessionDTOResponse response = mapper.convertValue(save, SessionDTOResponse.class);
+//        response.setCinemaDTO(mapper.convertValue(cinema, CinemaDTO.class));
+        SessionDTOResponse response = get(save.getSessionNumber());
+
         return response;
     }
 
     @Override
-    public SessionDTO addToHall(Long idSession, Integer numberHall) {
+    public SessionDTOResponse addToHall(String sessionNumber, Integer numberHall) {
         Hall hall = hallService.getHall(numberHall);
-        Session session = getSession(idSession);
+        Session session = getSession(sessionNumber);
         session.setHall(hall);
         Session save = sessionRepository.save(session);
-        SessionDTO response = mapper.convertValue(save, SessionDTO.class);
-        response.setHallDTO(mapper.convertValue(hall, HallDTO.class));
+//        SessionDTOResponse response = mapper.convertValue(save, SessionDTOResponse.class);
+//        response.setHallDTORequest(mapper.convertValue(hall, HallDTORequest.class));
+        SessionDTOResponse response = get(save.getSessionNumber());
         return response;
     }
 
     @Override
-    public List<SessionDTO> getAllSession(Integer page, Integer perPage, String sort, Sort.Direction order) {
+    public List<SessionDTOResponse> getAllSession(Integer page, Integer perPage, String sort, Sort.Direction order) {
         Pageable pageRequest = PaginationUtils.getPageRequest(page, perPage, sort, order);
         Page<Session> pageResult = sessionRepository.findAll(pageRequest);
 
-        List<SessionDTO> collect = pageResult.getContent().stream()
-                .map(c -> mapper.convertValue(c, SessionDTO.class))
+        List<SessionDTOResponse> collect = pageResult.getContent().stream()
+                .map(c -> mapper.convertValue(c, SessionDTOResponse.class))
                 .collect(Collectors.toList());
 
         return collect;

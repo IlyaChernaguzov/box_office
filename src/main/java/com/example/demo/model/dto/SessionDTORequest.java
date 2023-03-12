@@ -5,15 +5,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Column;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDTO {
+public class SessionDTORequest {
 
-    String name;
-    Integer age;
-    String email;
-    String payInformation;
+    String sessionNumber;
+    LocalDateTime startSession;
+    Integer price;
+
 }

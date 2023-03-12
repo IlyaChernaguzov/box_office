@@ -2,7 +2,7 @@ package com.example.demo.model.entity;
 
 
 import com.example.demo.model.enums.PlaceStatus;
-import com.example.demo.model.enums.Status;
+import com.example.demo.model.enums.Booking;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,15 +26,14 @@ public class Place {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idPlace;
 
+    @Column(name = "place_number", unique = true)
+    Integer placeNumber;
+
     @Column(name = "row_number")
     Integer rowNumber;
 
-    @Column(name = "place_number")
-    Integer placeNumber;
-
-    @Column(name = "place_status")
-    @Enumerated(EnumType.STRING)
-    Status status;
+    @Column(name = "place_number_in_row")
+    Integer placeNumberInRow;
 
     @CreationTimestamp
     @JsonIgnore
@@ -53,7 +52,7 @@ public class Place {
     @OneToMany(cascade = CascadeType.ALL)
     List<Order> order;
 
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     Hall hall;
 

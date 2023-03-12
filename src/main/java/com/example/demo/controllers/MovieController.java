@@ -1,8 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.model.dto.HallDTO;
 import com.example.demo.model.dto.MovieDTO;
-import com.example.demo.service.HallService;
 import com.example.demo.service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

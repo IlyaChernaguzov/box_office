@@ -1,5 +1,6 @@
 package com.example.demo.model.entity;
 
+import com.example.demo.model.enums.Booking;
 import com.example.demo.model.enums.OrderStatus;
 import com.example.demo.model.enums.SessionStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,14 +17,18 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "sessions")
+@Table(name = "orders")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Order {
 
     @Id
-    @JsonIgnore
+//    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idOrder;
+
+    @Column(name = "place_booking")
+    @Enumerated(EnumType.STRING)
+    Booking booking;
 
     @CreationTimestamp
     @JsonIgnore
@@ -38,15 +43,15 @@ public class Order {
     @Enumerated(EnumType.STRING)
     OrderStatus orderStatus = OrderStatus.CREATE;
 
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     User user;
 
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     Place place;
 
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     Session session;
 }
