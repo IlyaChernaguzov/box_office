@@ -47,7 +47,7 @@ public class CinemaServiceimpl implements CinemaService {
 
         Cinema cinema = getCinema(cinemaDTO.getNameCinema());
 
-        cinema.setNameCinema(cinemaDTO.getNameCinema() == null ? cinema.getNameCinema() : cinemaDTO.getNameCinema()); // проверяем пришедшие данный на null с помощью "?". ":" - если не null, то присвиваем пришедшее значение
+        cinema.setNameCinema(cinemaDTO.getNameCinema() == null ? cinema.getNameCinema() : cinemaDTO.getNameCinema());
         cinema.setIndex(cinemaDTO.getIndex() == null ? cinema.getIndex() : cinemaDTO.getIndex());
         cinema.setCity(cinemaDTO.getCity() == null ? cinema.getCity() : cinemaDTO.getCity());
         cinema.setAddress(cinemaDTO.getAddress() == null ? cinema.getAddress() : cinemaDTO.getAddress());

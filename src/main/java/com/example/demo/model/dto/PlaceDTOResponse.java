@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlaceDTOResponse extends PlaceDTORequest{
 
+    Long idPlace;
     HallDTORequest hallDTORequest;
 
 }

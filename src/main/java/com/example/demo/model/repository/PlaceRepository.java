@@ -11,8 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface PlaceRepository extends JpaRepository<Place, Long> {
-    Optional<Place> findByPlaceNumber(Integer placeNumber);
-
+    Optional<Place> findByIdPlace(Long idPlace);
     List<Place> findByHall(Hall hall);
+    Optional<Place> findPlaceByHallAndRowNumberAndPlaceNumberInRow(Hall hall, Integer rowNumber, Integer placeNumberInRow);
 
 }

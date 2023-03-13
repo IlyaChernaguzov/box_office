@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,51 +32,86 @@ import java.util.stream.Collectors;
 public class PlaceServiceimpl implements PlaceService {
 
     private final PlaceRepository placeRepository;
-
     private final HallService hallService;
     private final ObjectMapper mapper;
 
     @Override
-    public PlaceDTOResponse create(PlaceDTORequest placeDTORequest) {
-        placeRepository.findByPlaceNumber(placeDTORequest.getPlaceNumber()).ifPresent(
-                c -> {throw new CustomException("Место под номером: " + placeDTORequest.getPlaceNumber() + " уже существует", HttpStatus.BAD_REQUEST);
-                }
-        );
+    public PlaceDTOResponse create(PlaceDTORequest placeDTORequest, Long id) {
+        placeRepository
+                .findPlaceByHallAndRowNumberAndPlaceNumberInRow(
+                        hallService.getHall(id),
+                        placeDTORequest.getRowNumber(),
+                        placeDTORequest.getPlaceNumberInRow())
+                .ifPresent(
+                        c -> {throw new CustomException("Такое место уже существует", HttpStatus.BAD_REQUEST);
+                        });
+
+        if (placeDTORequest.getRowNumber() > hallService.getHall(id).getRows() ||
+                placeDTORequest.getRowNumber() < 1 ||
+                placeDTORequest.getRowNumber() == null)
+        {
+            throw new CustomException("Номер ряда не может быть больше " + hallService.getHall(id).getRows(), HttpStatus.BAD_REQUEST);
+        }
+
+        if (placeDTORequest.getPlaceNumberInRow() > hallService.getHall(id).getPlaces() ||
+                placeDTORequest.getPlaceNumberInRow() < 1 ||
+                placeDTORequest.getPlaceNumberInRow() == null)
+        {
+            throw new CustomException("Номер места не может быть больше " + hallService.getHall(id).getPlaces(), HttpStatus.BAD_REQUEST);
+        }
+
+//        List<Place> places = placeRepository.findByHall(hallService.getHall(id))
+//                .stream()
+//                .filter(o -> Objects.equals(o.getRowNumber(), placeDTORequest.getRowNumber()))
+//                .filter(p -> Objects.equals(p.getPlaceNumberInRow(), placeDTORequest.getPlaceNumberInRow()))
+//                .collect(Collectors.toList());
+//
+//        if (!places.isEmpty())
+//        {
+//            throw new CustomException("Такое место уже существует", HttpStatus.BAD_REQUEST);
+//        }
+
+//        placeRepository.findByPlaceNumber(placeDTORequest.getPlaceNumber()).ifPresent(
+//                c -> {throw new CustomException("Место под номером: " + placeDTORequest.getPlaceNumber() + " уже существует", HttpStatus.BAD_REQUEST);
+//                }
+//        );
 
         Place place = mapper.convertValue(placeDTORequest, Place.class);
+        place.setHall(hallService.getHall(id));
         place.setCreatedAt(LocalDateTime.now());
         Place save = placeRepository.save(place);
-        return mapper.convertValue(save, PlaceDTOResponse.class);
+        return get(save.getIdPlace());
     }
 
     @Override
-    public PlaceDTOResponse update(PlaceDTORequest placeDTORequest) {
-        Place place = getPlace(placeDTORequest.getPlaceNumber());
+    public PlaceDTOResponse update(PlaceDTORequest placeDTORequest, Long id, Long idPlace) {
+        Place place = getPlace(idPlace);
 
-        place.setPlaceNumber(placeDTORequest.getPlaceNumber() == null ? place.getPlaceNumber() : placeDTORequest.getPlaceNumber());
+//        place.setPlaceNumber(placeDTORequest.getPlaceNumber() == null ? place.getPlaceNumber() : placeDTORequest.getPlaceNumber());
         place.setRowNumber(placeDTORequest.getRowNumber() == null ? place.getRowNumber() : placeDTORequest.getRowNumber());
         place.setPlaceNumberInRow(placeDTORequest.getPlaceNumberInRow() == null ? place.getPlaceNumberInRow() : placeDTORequest.getPlaceNumberInRow());
-//        place.setBooking(placeDTORequest.getBooking() == null ? place.getBooking() : placeDTORequest.getBooking());
+        place.setHall(id == null ? place.getHall() : hallService.getHall(id));
         place.setUpdatedAt(LocalDateTime.now());
         place.setPlaceStatus(PlaceStatus.UPDATED);
         Place save = placeRepository.save(place);
-        return mapper.convertValue(save, PlaceDTOResponse.class);
+        return get(save.getIdPlace());
     }
 
     @Override
-    public PlaceDTOResponse get(Integer placeNumber) {
+    public PlaceDTOResponse get(Long idPlace) {
 
-        Place place = getPlace(placeNumber);
+        Place place = getPlace(idPlace);
         HallDTORequest hall = mapper.convertValue(place.getHall(), HallDTORequest.class);
         PlaceDTOResponse result = mapper.convertValue(place, PlaceDTOResponse.class);
         result.setHallDTORequest(hall);
+        result.setIdPlace(idPlace);
         return result;
     }
 
     @Override
-    public void delete(Integer placeNumber) {
+    public void delete(Long idPlace) {
 
-        Place place = getPlace(placeNumber);
+        Place place = getPlace(idPlace);
         place.setPlaceStatus(PlaceStatus.DELETED);
         place.setUpdatedAt(LocalDateTime.now());
 //        placeRepository.delete(place);// полное удаление
@@ -83,21 +119,21 @@ public class PlaceServiceimpl implements PlaceService {
     }
 
     @Override
-    public Place getPlace(Integer placeNumber) {
-        return placeRepository.findByPlaceNumber(placeNumber)
-                .orElseThrow(()-> new CustomException("Место под номером: " + placeNumber + " не найден", HttpStatus.NOT_FOUND));
+    public Place getPlace(Long idPlace) {
+        return placeRepository.findByIdPlace(idPlace)
+                .orElseThrow(()-> new CustomException("Место под номером: " + idPlace + " не найден", HttpStatus.NOT_FOUND));
     }
 
-    @Override
-    public PlaceDTOResponse addToHall(Integer placeNumber, Integer numberHall) {
-        Hall hall = hallService.getHall(numberHall);
-        Place place = getPlace(placeNumber);
-        place.setHall(hall);
-        Place save = placeRepository.save(place);
-        PlaceDTOResponse response = mapper.convertValue(save, PlaceDTOResponse.class);
-        response.setHallDTORequest(mapper.convertValue(hall, HallDTORequest.class));
-        return response;
-    }
+//    @Override
+//    public PlaceDTOResponse addToHall(Integer placeNumber, Long idHall) {
+//        Hall hall = hallService.getHall(idHall);
+//        Place place = getPlace(placeNumber);
+//        place.setHall(hall);
+//        Place save = placeRepository.save(place);
+//        PlaceDTOResponse response = mapper.convertValue(save, PlaceDTOResponse.class);
+//        response.setHallDTORequest(mapper.convertValue(hall, HallDTORequest.class));
+//        return response;
+//    }
 
     @Override
     public List<PlaceDTORequest> getAllPlace(Integer page, Integer perPage, String sort, Sort.Direction order) {
@@ -112,10 +148,9 @@ public class PlaceServiceimpl implements PlaceService {
     }
 
     @Override
-    public List<PlaceDTORequest> getAllPlaceByHall(Integer numberHall) {
+    public List<PlaceDTORequest> getAllPlaceByHall(Long id) {
 
-        List<Place> places = placeRepository.findByHall(hallService.getHall(numberHall));
-//        HallDTORequest hall = mapper.convertValue(hallService.getHall(numberHall), HallDTORequest.class);
+        List<Place> places = placeRepository.findByHall(hallService.getHall(id));
 
         List<PlaceDTORequest> response = places.stream()
                 .map(r -> mapper.convertValue(r, PlaceDTORequest.class))

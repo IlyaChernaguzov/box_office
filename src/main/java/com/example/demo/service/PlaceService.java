@@ -8,19 +8,19 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 public interface PlaceService {
-    PlaceDTOResponse create(PlaceDTORequest placeDTORequest);
+    PlaceDTOResponse create(PlaceDTORequest placeDTORequest, Long idHall);
 
-    PlaceDTOResponse update(PlaceDTORequest placeDTORequest);
+    PlaceDTOResponse update(PlaceDTORequest placeDTORequest, Long idHall, Long idPlace);
 
-    PlaceDTOResponse get(Integer placeNumber);
+    PlaceDTOResponse get(Long idPlace);
 
-    void delete(Integer placeNumber);
+    void delete(Long idPlace);
 
-    Place getPlace(Integer placeNumber);
+    Place getPlace(Long idPlace);
 
-    PlaceDTOResponse addToHall(Integer placeNumber, Integer numberHall);
+//    PlaceDTOResponse addToHall(Integer placeNumber, Integer numberHall);
 
     List<PlaceDTORequest> getAllPlace(Integer page, Integer perPage, String sort, Sort.Direction order);
 
-    List<PlaceDTORequest> getAllPlaceByHall (Integer numberHall);
+    List<PlaceDTORequest> getAllPlaceByHall (Long idHall);
 }

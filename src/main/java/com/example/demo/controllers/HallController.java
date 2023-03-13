@@ -22,42 +22,45 @@ public class HallController {
     private final HallService hallService;
 
     @PostMapping
-    @Operation(summary = "Создание зала")// описание в svagger ui
-    private ResponseEntity<HallDTOResponse> createHall(@RequestBody HallDTORequest hallDTORequest){
-        return ResponseEntity.ok(hallService.create(hallDTORequest));// обертка ответа со статусом ок
+    @Operation(summary = "Создание зала")
+    private ResponseEntity<HallDTOResponse> createHall(@RequestBody HallDTORequest hallDTORequest,
+                                                       @RequestParam String nameCinema){
+        return ResponseEntity.ok(hallService.create(hallDTORequest, nameCinema));
 
     }
 
     @PutMapping
     @Operation(summary = "Обновление данных зала")
-    private ResponseEntity<HallDTOResponse> updateHall(@RequestBody HallDTORequest hallDTORequest){
-        return ResponseEntity.ok(hallService.update(hallDTORequest));
+    private ResponseEntity<HallDTOResponse> updateHall(@RequestBody HallDTORequest hallDTORequest,
+                                                       @RequestParam String nameCinema,
+                                                       @RequestParam Long id){
+        return ResponseEntity.ok(hallService.update(hallDTORequest, nameCinema, id));
 
     }
 
     @GetMapping
     @Operation(summary = "Посмотреть зал")
-    private ResponseEntity<HallDTOResponse> getHall(@RequestParam Integer numberHall){
-        return ResponseEntity.ok(hallService.get(numberHall));
+    private ResponseEntity<HallDTOResponse> getHall(@RequestParam Long id){
+        return ResponseEntity.ok(hallService.get(id));
 
     }
 
     @DeleteMapping
     @Operation(summary = "Удалить зал")
-    private ResponseEntity<HttpStatus> deleteHall(@RequestParam Integer numberHall){
-        hallService.delete(numberHall);
+    private ResponseEntity<HttpStatus> deleteHall(@RequestParam Long id){
+        hallService.delete(id);
         return ResponseEntity.ok().build();
 
     }
 
-    @PostMapping("/hallToCinema")
-    @Operation(summary = "Присваивание залу кинотеатр")
-    private ResponseEntity<HallDTOResponse> addToCinema(@RequestBody Integer numberHall, @RequestParam String nameCinema) {
-        return ResponseEntity.ok(hallService.addToCinema(numberHall, nameCinema));// обертка ответа со статусом ок
+//    @PostMapping("/hallToCinema")
+//    @Operation(summary = "Присваивание залу кинотеатр")
+//    private ResponseEntity<HallDTOResponse> addToCinema(@RequestBody Integer numberHall, @RequestParam String nameCinema) {
+//        return ResponseEntity.ok(hallService.addToCinema(numberHall, nameCinema));// обертка ответа со статусом ок
+//
+//    }
 
-    }
-
-    @GetMapping("/all")// пагинация и сортировка
+    @GetMapping("/all")
     @Operation(summary = "Сортировать залы")
     public List<HallDTOResponse> getAllHall(@RequestParam(required = false, defaultValue = "1") Integer page,
                                             @RequestParam(required = false, defaultValue = "10") Integer perPage,

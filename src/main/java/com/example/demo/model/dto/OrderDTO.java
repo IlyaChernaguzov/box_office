@@ -11,7 +11,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderDTO {
 
-    Integer placeNumber;
-    String sessionNumber;
-    Booking booking;
+    Long idPlace;
+    Long idSession;
 }

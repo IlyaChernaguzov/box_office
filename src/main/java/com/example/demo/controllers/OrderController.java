@@ -21,22 +21,22 @@ public class OrderController {
     public final OrderService orderService;
 
     @PostMapping
-    @Operation(summary = "Создание заказа")// описание в svagger ui
+    @Operation(summary = "Создание заказа")
     private ResponseEntity<OrderDTOResponse> createOrder(@RequestBody OrderDTO orderDTO){
-        return ResponseEntity.ok(orderService.create(orderDTO));// обертка ответа со статусом ок
+        return ResponseEntity.ok(orderService.create(orderDTO));
 
     }
 
     @PutMapping
     @Operation(summary = "Обновление данных заказа")
-    private ResponseEntity<OrderDTOResponse> updateOrder(@RequestBody OrderDTOUpdate orderDTOUpdate){
-        return ResponseEntity.ok(orderService.update(orderDTOUpdate));
+    private ResponseEntity<OrderDTOResponse> updateOrder(@RequestBody OrderDTO orderDTO, @RequestParam Long idOrder){
+        return ResponseEntity.ok(orderService.update(orderDTO, idOrder));
 
     }
 
     @GetMapping
     @Operation(summary = "Посмотреть тзаказ")
-    private ResponseEntity<OrderDTOResponse> getOrder(@RequestParam Long idOrder){//возвращает именно ответ CarDTOResponse
+    private ResponseEntity<OrderDTOResponse> getOrder(@RequestParam Long idOrder){
         return ResponseEntity.ok(orderService.get(idOrder));
 
     }
@@ -49,28 +49,28 @@ public class OrderController {
 
     }
 
-    @PostMapping("/orderToUser")
-    @Operation(summary = "Присваивание заказу пользователя")
-    private ResponseEntity<OrderDTOResponse> addToUser(@RequestBody Long idOrder, @RequestParam String email){
-        return ResponseEntity.ok(orderService.addToUser(idOrder, email));// обертка ответа со статусом ок
+//    @PostMapping("/orderToUser")
+//    @Operation(summary = "Присваивание заказу пользователя")
+//    private ResponseEntity<OrderDTOResponse> addToUser(@RequestBody Long idOrder, @RequestParam String email){
+//        return ResponseEntity.ok(orderService.addToUser(idOrder, email));// обертка ответа со статусом ок
+//
+//    }
+//
+//    @PostMapping("/orderToPlace")
+//    @Operation(summary = "Присваивание заказу места")
+//    private ResponseEntity<OrderDTOResponse> addToPlace(@RequestBody Long idOrder, @RequestParam Integer placeNumber){
+//        return ResponseEntity.ok(orderService.addToPlace(idOrder, placeNumber));// обертка ответа со статусом ок
+//
+//    }
+//
+//    @PostMapping("/orderToSession")
+//    @Operation(summary = "Присваивание заказу сеанса")
+//    private ResponseEntity<OrderDTOResponse> addToSession(@RequestBody Long idOrder, @RequestParam String sessionNumber){
+//        return ResponseEntity.ok(orderService.addToSession(idOrder, sessionNumber));// обертка ответа со статусом ок
+//
+//    }
 
-    }
-
-    @PostMapping("/orderToPlace")
-    @Operation(summary = "Присваивание заказу места")
-    private ResponseEntity<OrderDTOResponse> addToPlace(@RequestBody Long idOrder, @RequestParam Integer placeNumber){
-        return ResponseEntity.ok(orderService.addToPlace(idOrder, placeNumber));// обертка ответа со статусом ок
-
-    }
-
-    @PostMapping("/orderToSession")
-    @Operation(summary = "Присваивание заказу сеанса")
-    private ResponseEntity<OrderDTOResponse> addToSession(@RequestBody Long idOrder, @RequestParam String sessionNumber){
-        return ResponseEntity.ok(orderService.addToSession(idOrder, sessionNumber));// обертка ответа со статусом ок
-
-    }
-
-    @GetMapping("/all")// пагинация и сортировка
+    @GetMapping("/all")
     @Operation(summary = "Сортировать заказы")
     public List<OrderDTOResponse> getAllOrder(@RequestParam(required = false, defaultValue = "1") Integer page,
                                               @RequestParam(required = false, defaultValue = "10") Integer perPage,
@@ -80,10 +80,10 @@ public class OrderController {
 
     }
 
-    @GetMapping("/allOrderBySession")// пагинация и сортировка
+    @GetMapping("/allOrderBySession")
     @Operation(summary = "Сортировать заказы по сеансу")
-    public List<OrderDTOResponse> getOrderBySession(@RequestParam String sessionNumber){
-        return orderService.getAllOrderBySession(sessionNumber);
+    public List<OrderDTOResponse> getOrderBySession(@RequestParam Long idSession){
+        return orderService.getAllOrderBySession(idSession);
 
     }
 }

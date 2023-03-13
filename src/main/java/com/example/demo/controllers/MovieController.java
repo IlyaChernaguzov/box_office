@@ -20,9 +20,9 @@ public class MovieController {
     private final MovieService movieService;
 
     @PostMapping
-    @Operation(summary = "Создание фильма")// описание в svagger ui
+    @Operation(summary = "Создание фильма")
     private ResponseEntity<MovieDTO> createMovie(@RequestBody MovieDTO movieDTO){
-        return ResponseEntity.ok(movieService.create(movieDTO));// обертка ответа со статусом ок
+        return ResponseEntity.ok(movieService.create(movieDTO));
 
     }
 
@@ -48,7 +48,7 @@ public class MovieController {
 
     }
 
-    @GetMapping("/all")// пагинация и сортировка
+    @GetMapping("/all")
     @Operation(summary = "Сортировать фильмы")
     public List<MovieDTO> getAllMovie(@RequestParam(required = false, defaultValue = "1") Integer page,
                                     @RequestParam(required = false, defaultValue = "10") Integer perPage,

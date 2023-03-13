@@ -107,10 +107,9 @@ public class UserServiceimpl implements UserService {
     }
 
     @Override
-    public List<UserDTOResponsePlace> getAllOrderBySession(String sessionNumber) {
+    public List<UserDTOResponsePlace> getAllOrderBySession(Long idSession) {
 
-
-        List<Order> orders = orderRepository.findBySession(sessionService.getSession(sessionNumber));
+        List<Order> orders = orderRepository.findBySession(sessionService.getSession(idSession));
 
         List<PlaceDTORequest> places = orders.stream()
                 .map(r -> mapper.convertValue(r.getPlace(), PlaceDTORequest.class))
@@ -134,8 +133,8 @@ public class UserServiceimpl implements UserService {
                 .map(r -> mapper.convertValue(r.getMovie(), MovieDTOResponse.class))
                 .collect(Collectors.toList());
 
-        List<HallDTORequest> halls = sessions.stream()
-                .map(r -> mapper.convertValue(r.getHall(), HallDTORequest.class))
+        List<Integer> halls = sessions.stream()
+                .map(r -> r.getHall().getNumberHall())
                 .collect(Collectors.toList());
 
         List<UserDTOResponseSession> response = sessions.stream()
@@ -147,29 +146,40 @@ public class UserServiceimpl implements UserService {
         }
 
         for (int i = 0; i < response.size(); i++){
-            response.get(i).setHallDTORequest(halls.get(i));
+            response.get(i).setNumberHall(halls.get(i));
         }
         return response;
     }
 
     @Override
-    public UserDTOResponseTicket getTicket(String sessionNumber, Integer placeNumber) {
-        List<Order> orders = orderRepository.findBySession(sessionService.getSession(sessionNumber))
-                .stream()
-                .filter(o -> Objects.equals(o.getPlace().getPlaceNumber(), placeNumber))
-                .collect(Collectors.toList());
+    public UserDTOResponseTicket getTicket(Long idSession, Long idPlace) {
+        Optional<Order> optional = orderRepository
+                .findOrderBySessionAndPlace(sessionService.getSession(idSession), placeService.getPlace(idPlace));
 
-        if (orders.isEmpty())
+        if (!optional.isPresent())
         {
             throw new CustomException("Место не найдено", HttpStatus.BAD_REQUEST);
         }
 
-        Order order = orders.get(0);
+//        List<Order> orders = orderRepository.findBySession(sessionService.getSession(idSession))
+//                .stream()
+//                .filter(o -> Objects.equals(o.getPlace().getPlaceNumber(), placeNumber))
+//                .collect(Collectors.toList());
+//
+//        if (orders.isEmpty())
+//        {
+//            throw new CustomException("Место не найдено", HttpStatus.BAD_REQUEST);
+//        }
+
+//        Order order = orders.get(0);
+        Order order = optional.get();
 
         if (order.getBooking().equals(Booking.RESERVATION))
         {
             throw new CustomException("Это место уже забронировано", HttpStatus.BAD_REQUEST);
         }
+
+
 
         Long idOrder = order.getIdOrder();
 

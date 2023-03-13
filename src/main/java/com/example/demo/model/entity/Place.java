@@ -26,7 +26,7 @@ public class Place {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idPlace;
 
-    @Column(name = "place_number", unique = true)
+    @Column(name = "place_number")
     Integer placeNumber;
 
     @Column(name = "row_number")

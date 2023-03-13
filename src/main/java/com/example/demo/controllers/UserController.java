@@ -22,9 +22,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    @Operation(summary = "Создание пользователя")// описание в svagger ui
+    @Operation(summary = "Создание пользователя")
     private ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO){
-        return ResponseEntity.ok(userService.create(userDTO));// обертка ответа со статусом ок
+        return ResponseEntity.ok(userService.create(userDTO));
 
     }
 
@@ -50,7 +50,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/all")// пагинация и сортировка
+    @GetMapping("/all")
     @Operation(summary = "Сортировать пользователей")
     public List<UserDTO> getAllUser(@RequestParam(required = false, defaultValue = "1") Integer page,
                                         @RequestParam(required = false, defaultValue = "10") Integer perPage,
@@ -62,12 +62,12 @@ public class UserController {
 
     @GetMapping("/allOrderBySession")// пагинация и сортировка
     @Operation(summary = "Получение пользователем списка мест")
-    public List<UserDTOResponsePlace> getOrderBySession(@RequestParam String sessionNumber){
-        return userService.getAllOrderBySession(sessionNumber);
+    public List<UserDTOResponsePlace> getOrderBySession(@RequestParam Long idSession){
+        return userService.getAllOrderBySession(idSession);
 
     }
 
-    @GetMapping("/allSessionByCinema")// пагинация и сортировка
+    @GetMapping("/allSessionByCinema")
     @Operation(summary = "Получение пользователем списка сеансов")
     public List<UserDTOResponseSession> getSessionByCinema(@RequestParam String nameCinema){
         return userService.getAllSessionByCinema(nameCinema);
@@ -76,13 +76,13 @@ public class UserController {
 
     @GetMapping("/getTicket")
     @Operation(summary = "Получение билета")
-    private ResponseEntity<UserDTOResponseTicket> getTicket(@RequestParam String sessionNumber, @RequestParam Integer placeNumber){
-        return ResponseEntity.ok(userService.getTicket(sessionNumber, placeNumber));
+    private ResponseEntity<UserDTOResponseTicket> getTicket(@RequestParam Long idSession, @RequestParam Long idPlace){
+        return ResponseEntity.ok(userService.getTicket(idSession, idPlace));
 
     }
 
 //    @PostMapping("/userGetPlace")
-//    @Operation(summary = "Получение пользователем списка мест")// описание в svagger ui
+//    @Operation(summary = "Получение пользователем списка мест")
 //    private ResponseEntity<UserDTOResponsePlace> userGetPlace(@RequestBody UserDTORequestPlace userDTORequestPlace){
 //        return ResponseEntity.ok(userService.getPlace(userDTORequestPlace));
 //
@@ -90,7 +90,7 @@ public class UserController {
 //    }
 //
 //    @PostMapping("/userBooking")
-//    @Operation(summary = "Бронирование пользователем места")// описание в svagger ui
+//    @Operation(summary = "Бронирование пользователем места")
 //    private ResponseEntity<UserDTOResponseBooking> userBookingPlace(@RequestBody UserDTORequestBooking userDTORequestBooking){
 //        return ResponseEntity.ok(userService.bookingPlace(userDTORequestBooking));// обертка ответа со статусом ок
 //

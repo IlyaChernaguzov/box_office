@@ -8,17 +8,17 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 public interface HallService {
-    HallDTOResponse create(HallDTORequest hallDTORequest);
+    HallDTOResponse create(HallDTORequest hallDTORequest, String nameCinema);
 
-    HallDTOResponse update(HallDTORequest hallDTORequest);
+    HallDTOResponse update(HallDTORequest hallDTORequest, String nameCinema, Long id);
 
-    HallDTOResponse get(Integer numberHall);
+    HallDTOResponse get(Long id);
 
-    void delete(Integer numberHall);
+    void delete(Long id);
 
-    Hall getHall(Integer numberHall);
+    Hall getHall(Long id);
 
-    HallDTOResponse addToCinema (Integer numberHall, String nameCinema);
+//    HallDTOResponse addToCinema (Integer numberHall, String nameCinema);
 
     List<HallDTOResponse> getAllHall(Integer page, Integer perPage, String sort, Sort.Direction order);
 }

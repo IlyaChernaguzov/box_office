@@ -15,5 +15,5 @@ public class UserDTO {
     String name;
     Integer age;
     String email;
-    String payInformation;
+//    String payInformation;
 }

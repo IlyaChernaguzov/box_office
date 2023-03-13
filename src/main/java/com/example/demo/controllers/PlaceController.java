@@ -22,42 +22,45 @@ public class PlaceController {
     public final PlaceService placeService;
 
     @PostMapping
-    @Operation(summary = "Создание места")// описание в swagger ui
-    private ResponseEntity<PlaceDTOResponse> createPlace(@RequestBody PlaceDTORequest placeDTORequest){
-        return ResponseEntity.ok(placeService.create(placeDTORequest));// обертка ответа со статусом ок
+    @Operation(summary = "Создание места")
+    private ResponseEntity<PlaceDTOResponse> createPlace(@RequestBody PlaceDTORequest placeDTORequest,
+                                                         @RequestParam  Long id){
+        return ResponseEntity.ok(placeService.create(placeDTORequest, id));
 
     }
 
     @PutMapping
     @Operation(summary = "Обновление места")
-    private ResponseEntity<PlaceDTOResponse> updatePlace(@RequestBody PlaceDTORequest placeDTORequest){
-        return ResponseEntity.ok(placeService.update(placeDTORequest));
+    private ResponseEntity<PlaceDTOResponse> updatePlace(@RequestBody PlaceDTORequest placeDTORequest,
+                                                         @RequestParam Long id,
+                                                         @RequestParam  Long idPlace){
+        return ResponseEntity.ok(placeService.update(placeDTORequest, id, idPlace));
 
     }
 
     @GetMapping
     @Operation(summary = "Посмотреть место")
-    private ResponseEntity<PlaceDTOResponse> getPlace(@RequestParam Integer placeNumber){//возвращает именно ответ CarDTOResponse
-        return ResponseEntity.ok(placeService.get(placeNumber));
+    private ResponseEntity<PlaceDTOResponse> getPlace(@RequestParam Long idPlace){//возвращает именно ответ CarDTOResponse
+        return ResponseEntity.ok(placeService.get(idPlace));
 
     }
 
     @DeleteMapping
     @Operation(summary = "Удаление места")
-    private ResponseEntity<HttpStatus> deletePlace(@RequestParam Integer placeNumber){
-        placeService.delete(placeNumber);
+    private ResponseEntity<HttpStatus> deletePlace(@RequestParam Long idPlace){
+        placeService.delete(idPlace);
         return ResponseEntity.ok().build();
 
     }
 
-    @PostMapping("/placeToHall")
-    @Operation(summary = "Присваивание месту зал")
-    private ResponseEntity<PlaceDTOResponse> addToHall(@RequestBody Integer placeNumber, @RequestParam Integer numberHall){
-        return ResponseEntity.ok(placeService.addToHall(placeNumber, numberHall));// обертка ответа со статусом ок
+//    @PostMapping("/placeToHall")
+//    @Operation(summary = "Присваивание месту зал")
+//    private ResponseEntity<PlaceDTOResponse> addToHall(@RequestBody Integer placeNumber, @RequestParam Integer numberHall){
+//        return ResponseEntity.ok(placeService.addToHall(placeNumber, numberHall));// обертка ответа со статусом ок
+//
+//    }
 
-    }
-
-    @GetMapping("/all")// пагинация и сортировка
+    @GetMapping("/all")
     @Operation(summary = "Сортировать места")
     public List<PlaceDTORequest> getAllPlace(@RequestParam(required = false, defaultValue = "1") Integer page,
                                              @RequestParam(required = false, defaultValue = "10") Integer perPage,
@@ -67,10 +70,10 @@ public class PlaceController {
 
     }
 
-    @GetMapping("/allPlaceByHall")// пагинация и сортировка
+    @GetMapping("/allPlaceByHall")
     @Operation(summary = "Сортировать места по холлу")
-    public List<PlaceDTORequest> getAllPlaceByHall(@RequestParam Integer numberHall){
-        return placeService.getAllPlaceByHall(numberHall);
+    public List<PlaceDTORequest> getAllPlaceByHall(@RequestParam Long id){
+        return placeService.getAllPlaceByHall(id);
 
     }
 }

@@ -2,7 +2,6 @@ package com.example.demo.controllers;
 
 import com.example.demo.model.dto.SessionDTORequest;
 import com.example.demo.model.dto.SessionDTOResponse;
-import com.example.demo.model.dto.SessionDTOUpdate;
 import com.example.demo.service.SessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,54 +22,56 @@ public class SessionController {
     public final SessionService sessionService;
 
     @PostMapping
-    @Operation(summary = "Создание сеанса")// описание в svagger ui
+    @Operation(summary = "Создание сеанса")
     private ResponseEntity<SessionDTOResponse> createSession(@RequestBody SessionDTORequest sessionDTORequest){
-        return ResponseEntity.ok(sessionService.create(sessionDTORequest));// обертка ответа со статусом ок
+        return ResponseEntity.ok(sessionService.create(sessionDTORequest));
 
     }
 
     @PutMapping
     @Operation(summary = "Обновление данных сеанса")
-    private ResponseEntity<SessionDTOResponse> updateSession(@RequestBody SessionDTOUpdate sessionDTOUpdate){
-        return ResponseEntity.ok(sessionService.update(sessionDTOUpdate));
+    private ResponseEntity<SessionDTOResponse> updateSession(@RequestBody SessionDTORequest sessionDTORequest,
+                                                             @RequestParam Long idSession){
+        return ResponseEntity.ok(sessionService.update(sessionDTORequest, idSession));
 
     }
 
     @GetMapping
     @Operation(summary = "Посмотреть сеанс")
-    private ResponseEntity<SessionDTOResponse> getSession(@RequestParam String sessionNumber){//возвращает именно ответ CarDTOResponse
-        return ResponseEntity.ok(sessionService.get(sessionNumber));
+    private ResponseEntity<SessionDTOResponse> getSession(@RequestParam Long idSession){
+        return ResponseEntity.ok(sessionService.get(idSession));
 
     }
 
     @DeleteMapping
     @Operation(summary = "Удаление сеанса")
-    private ResponseEntity<HttpStatus> deleteSession(@RequestParam String sessionNumber){
-        sessionService.delete(sessionNumber);
+    private ResponseEntity<HttpStatus> deleteSession(@RequestParam Long idSession){
+        sessionService.delete(idSession);
         return ResponseEntity.ok().build();
 
     }
 
-    @PostMapping("/sessionToCinema")
-    @Operation(summary = "Присваивание сеансу кинотеатр")
-    private ResponseEntity<SessionDTOResponse> addToCinema(@RequestBody String sessionNumber, @RequestParam String nameCinema){
-        return ResponseEntity.ok(sessionService.addToCinema(sessionNumber, nameCinema));// обертка ответа со статусом ок
-
-    }
-
-    @PostMapping("/sessionToMovie")
-    @Operation(summary = "Присваивание сеансу фильма")
-    private ResponseEntity<SessionDTOResponse> addToMovie(@RequestBody String sessionNumber, @RequestParam  String nameMovie){
-        return ResponseEntity.ok(sessionService.addToMovie(sessionNumber, nameMovie));// обертка ответа со статусом ок
-
-    }
-
-    @PostMapping("/sessionToHall")
-    @Operation(summary = "Присваивание сеансу зала")
-    private ResponseEntity<SessionDTOResponse> addToHall(@RequestBody String sessionNumber, @RequestParam Integer numberHall){
-        return ResponseEntity.ok(sessionService.addToHall(sessionNumber, numberHall));// обертка ответа со статусом ок
-
-    }
+//    @PostMapping("/sessionToCinema")
+//    @Operation(summary = "Присваивание сеансу кинотеатр")
+//    private ResponseEntity<SessionDTOResponse> addToCinema(@RequestBody String sessionNumber,
+//                                                           @RequestParam String nameCinema){
+//        return ResponseEntity.ok(sessionService.addToCinema(sessionNumber, nameCinema));
+//
+//    }
+//
+//    @PostMapping("/sessionToMovie")
+//    @Operation(summary = "Присваивание сеансу фильма")
+//    private ResponseEntity<SessionDTOResponse> addToMovie(@RequestBody String sessionNumber, @RequestParam  String nameMovie){
+//        return ResponseEntity.ok(sessionService.addToMovie(sessionNumber, nameMovie));
+//
+//    }
+//
+//    @PostMapping("/sessionToHall")
+//    @Operation(summary = "Присваивание сеансу зала")
+//    private ResponseEntity<SessionDTOResponse> addToHall(@RequestBody String sessionNumber, @RequestParam Integer numberHall){
+//        return ResponseEntity.ok(sessionService.addToHall(sessionNumber, numberHall));
+//
+//    }
 
     @GetMapping("/all")// пагинация и сортировка
     @Operation(summary = "Сортировать сеансы")

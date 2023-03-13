@@ -24,9 +24,9 @@ public interface UserService {
 //
 //    UserDTOResponseBooking bookingPlace (UserDTORequestBooking userDTORequestBooking);
 
-    List<UserDTOResponsePlace> getAllOrderBySession (String sessionNumber);
+    List<UserDTOResponsePlace> getAllOrderBySession (Long idSession);
 
     List<UserDTOResponseSession> getAllSessionByCinema (String nameCinema);
 
-    UserDTOResponseTicket getTicket (String sessionNumber, Integer placeNumber);
+    UserDTOResponseTicket getTicket (Long idSession, Long idPlace);
 }

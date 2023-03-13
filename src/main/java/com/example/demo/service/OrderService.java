@@ -9,7 +9,7 @@ import java.util.List;
 public interface OrderService {
     OrderDTOResponse create(OrderDTO orderDTO);
 
-    OrderDTOResponse update(OrderDTOUpdate orderDTOUpdate);
+    OrderDTOResponse update(OrderDTO orderDTO, Long idOrder);
 
     OrderDTOResponse get(Long idOrder);
 
@@ -17,13 +17,13 @@ public interface OrderService {
 
     Order getOrder(Long idOrder);
 
-    OrderDTOResponse addToUser (Long idOrder, String email);
-
-    OrderDTOResponse addToPlace (Long idOrder, Integer placeNumber);
-
-    OrderDTOResponse addToSession (Long idOrder, String sessionNumber);
+//    OrderDTOResponse addToUser (Long idOrder, String email);
+//
+//    OrderDTOResponse addToPlace (Long idOrder, Integer placeNumber);
+//
+//    OrderDTOResponse addToSession (Long idOrder, String sessionNumber);
 
     List<OrderDTOResponse> getAllOrder(Integer page, Integer perPage, String sort, Sort.Direction order);
 
-    List<OrderDTOResponse> getAllOrderBySession (String sessionNumber);
+    List<OrderDTOResponse> getAllOrderBySession (Long idSession);
 }

@@ -12,8 +12,10 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SessionDTORequest {
 
-    String sessionNumber;
+//    String sessionNumber;
     LocalDateTime startSession;
     Integer price;
+    Long id;
+    String nameMovie;
 
 }

@@ -21,9 +21,9 @@ public class CinemaController {
     private final CinemaService cinemaService;
 
     @PostMapping
-    @Operation(summary = "Создание кинотеатра")// описание в svagger ui
+    @Operation(summary = "Создание кинотеатра")
     private ResponseEntity<CinemaDTO> createCinema(@RequestBody CinemaDTO cinemaDTO){
-        return ResponseEntity.ok(cinemaService.create(cinemaDTO));// обертка ответа со статусом ок
+        return ResponseEntity.ok(cinemaService.create(cinemaDTO));
 
     }
 
@@ -49,7 +49,7 @@ public class CinemaController {
 
     }
 
-    @GetMapping("/all")// пагинация и сортировка
+    @GetMapping("/all")
     @Operation(summary = "Сортировать кинотеатры")
     public List<CinemaDTO> getAllCinema(@RequestParam(required = false, defaultValue = "1") Integer page,
                                          @RequestParam(required = false, defaultValue = "10") Integer perPage,

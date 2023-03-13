@@ -25,7 +25,7 @@ public class Hall {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "number_hall", unique = true)
+    @Column(name = "number_hall")
     Integer numberHall;
 
     @Column(name = "quantity_places")

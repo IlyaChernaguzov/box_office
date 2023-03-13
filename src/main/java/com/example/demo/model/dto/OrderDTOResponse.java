@@ -11,8 +11,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderDTOResponse {
 
-//    Long idOrder;
-    UserDTO userDTO;
+    Long idOrder;
+//    UserDTO userDTO;
     PlaceDTORequest placeDTORequest;
     SessionDTORequest sessionDTORequest;
     Booking booking;

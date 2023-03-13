@@ -13,4 +13,5 @@ public class HallDTORequest {
     Integer numberHall;
     Integer places;
     Integer rows;
+
 }

@@ -5,12 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SessionDTOResponse extends SessionDTORequest{
+public class SessionDTOResponse {
 
+    Long idSession;
+    LocalDateTime startSession;
+    Integer price;
     MovieDTO movieDTO;
-    CinemaDTO cinemaDTO;
-    HallDTORequest hallDTORequest;
+    HallDTOResponse hallDTOResponse;
 }
