@@ -226,6 +226,7 @@ public class UserServiceimpl implements UserService {
         Order order = orderService.getOrder(idOrder);
 
         order.setBooking(Booking.FREE);
+        order.setUser(null);
         order.setUpdatedAt(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.UPDATED);
         Order save = orderRepository.save(order);
@@ -246,47 +247,38 @@ public class UserServiceimpl implements UserService {
             throw new CustomException("У вас нет заказов", HttpStatus.BAD_REQUEST);
         }
 
-////        Long idOrder = order.getIdOrder();
 //        List<Long> idOrders = orders.stream()
 //                .map(i -> i.getIdOrder())
 //                .collect(Collectors.toList());
 //
-////        LocalDateTime startSession = order.getSession().getStartSession();
 //        List<LocalDateTime> startSessions = orders.stream()
 //                .map(s -> s.getSession().getStartSession())
 //                .collect(Collectors.toList());
 //
-////        Integer price = order.getSession().getPrice();
 //        List<Integer> prices = orders.stream()
 //                .map(p -> p.getSession().getPrice())
 //                .collect(Collectors.toList());
 //
-////        String nameMovie = order.getSession().getMovie().getNameMovie();
 //        List<String> nameMovies = orders.stream()
 //                .map(m -> m.getSession().getMovie().getNameMovie())
 //                .collect(Collectors.toList());
 //
-////        Integer durationMovie = order.getSession().getMovie().getDurationMovie();
 //        List<Integer> durationMovies = orders.stream()
 //                .map(d -> d.getSession().getMovie().getDurationMovie())
 //                .collect(Collectors.toList());
 //
-////        String nameCinema = order.getSession().getCinema().getNameCinema();
 //        List<String> nameCinemas = orders.stream()
 //                .map(c -> c.getSession().getCinema().getNameCinema())
 //                .collect(Collectors.toList());
 //
-////        Integer numberHall = order.getSession().getHall().getNumberHall();
 //        List<Integer> numberHalls = orders.stream()
 //                .map(h -> h.getSession().getHall().getNumberHall())
 //                .collect(Collectors.toList());
 //
-////        Integer rowNumber = order.getPlace().getRowNumber();
 //        List<Integer> rowNumbers = orders.stream()
 //                .map(r -> r.getPlace().getRowNumber())
 //                .collect(Collectors.toList());
 //
-////        Integer placeNumberInRow = order.getPlace().getPlaceNumberInRow();
 //        List<Integer> placeNumbersInRow = orders.stream()
 //                .map(p -> p.getPlace().getPlaceNumberInRow())
 //                .collect(Collectors.toList());
@@ -294,7 +286,6 @@ public class UserServiceimpl implements UserService {
 //        List<UserDTOResponseOrder> response = orders.stream()
 //                .map(r -> mapper.convertValue(r, UserDTOResponseOrder.class))
 //                .collect(Collectors.toList());
-//
 //
 //        for (int i = 0; i < response.size(); i++){
 //            response.get(i).setIdOrder(idOrders.get(i));
