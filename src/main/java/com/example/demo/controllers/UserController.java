@@ -76,8 +76,24 @@ public class UserController {
 
     @GetMapping("/getTicket")
     @Operation(summary = "Получение билета")
-    private ResponseEntity<UserDTOResponseTicket> getTicket(@RequestParam Long idSession, @RequestParam Long idPlace){
-        return ResponseEntity.ok(userService.getTicket(idSession, idPlace));
+    private ResponseEntity<UserDTOResponseTicket> getTicket(@RequestParam Long idSession,
+                                                            @RequestParam Long idPlace,
+                                                            @RequestParam String email){
+        return ResponseEntity.ok(userService.getTicket(idSession, idPlace, email));
+
+    }
+
+    @GetMapping("/cancelBoking")
+    @Operation(summary = "Отмена брони")
+    private ResponseEntity<UserDTOResponseCancelBooking> cancelBoking(@RequestParam Long idOrder){
+        return ResponseEntity.ok(userService.cancelBoking(idOrder));
+
+    }
+
+    @GetMapping("/allOrderByUser")
+    @Operation(summary = "Показать все заказы")
+    public List<UserDTOResponseOrder> getOrders(@RequestParam String email){
+        return userService.getAllOrderByUser(email);
 
     }
 

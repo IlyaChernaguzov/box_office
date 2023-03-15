@@ -36,7 +36,7 @@ public class OrderServiceimpl implements OrderService {
 //    private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
     private final SessionRepository sessionRepository;
-    private final UserService userService;
+//    private final UserService userService;
     private final PlaceService placeService;
     private final SessionService sessionService;
     private final ObjectMapper mapper;

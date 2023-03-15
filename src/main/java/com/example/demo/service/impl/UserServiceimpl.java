@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.mail.internet.InternetAddress;
 
 @Slf4j
 @Service
@@ -40,12 +41,21 @@ public class UserServiceimpl implements UserService {
     private final CinemaService cinemaService;
     private final HallService hallService;
     private final PlaceService placeService;
-//    private final OrderService orderService;
+    private final OrderService orderService;
     private final PlaceRepository placeRepository;
     private final ObjectMapper mapper;
 
     @Override
     public UserDTO create(UserDTO userDTO) {
+
+        try {
+            InternetAddress emailAddr = new InternetAddress(userDTO.getEmail());
+            emailAddr.validate();
+        } catch (Exception ex) {
+            log.error("[Create User] email is not valid" + userDTO);
+            throw new CustomException("Невалидный email", HttpStatus.BAD_REQUEST);
+        }
+
         userRepository.findByEmail(userDTO.getEmail()).ifPresent(
                 c -> {throw new CustomException("Пользователь с эл.почтой: " + userDTO.getEmail() + " уже существует", HttpStatus.BAD_REQUEST);
                 }
@@ -62,7 +72,6 @@ public class UserServiceimpl implements UserService {
         User user = getUser(userDTO.getEmail());
 
         user.setEmail(userDTO.getEmail() == null ? user.getEmail() : userDTO.getEmail());
-        user.setAge(userDTO.getAge() == null ? user.getAge() : userDTO.getAge());
         user.setName(userDTO.getName() == null ? user.getName() : userDTO.getName());
         user.setUpdatedAt(LocalDateTime.now());
         user.setUserStatus(UserStatus.UPDATED);
@@ -152,7 +161,7 @@ public class UserServiceimpl implements UserService {
     }
 
     @Override
-    public UserDTOResponseTicket getTicket(Long idSession, Long idPlace) {
+    public UserDTOResponseTicket getTicket(Long idSession, Long idPlace, String email) {
         Optional<Order> optional = orderRepository
                 .findOrderBySessionAndPlace(sessionService.getSession(idSession), placeService.getPlace(idPlace));
 
@@ -193,6 +202,7 @@ public class UserServiceimpl implements UserService {
         Integer placeNumberInRow = order.getPlace().getPlaceNumberInRow();
 
         order.setBooking(Booking.RESERVATION);
+        order.setUser(getUser(email));
         order.setUpdatedAt(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.UPDATED);
         Order save = orderRepository.save(order);
@@ -211,31 +221,138 @@ public class UserServiceimpl implements UserService {
         return response;
     }
 
-//    @Override
-//    public UserDTOResponsePlace getPlace(UserDTORequestPlace userDTORequestPlace) {
+    @Override
+    public UserDTOResponseCancelBooking cancelBoking(Long idOrder) {
+        Order order = orderService.getOrder(idOrder);
+
+        order.setBooking(Booking.FREE);
+        order.setUpdatedAt(LocalDateTime.now());
+        order.setOrderStatus(OrderStatus.UPDATED);
+        Order save = orderRepository.save(order);
+
+        UserDTOResponseCancelBooking result = mapper.convertValue(save, UserDTOResponseCancelBooking.class);
+        result.setIdOrder(save.getIdOrder());
+        result.setBooking(save.getBooking());
+
+        return result;
+    }
+
+    @Override
+    public List<UserDTOResponseOrder> getAllOrderByUser(String email) {
+        List<Order> orders = orderRepository.findOrderByUser(getUser(email));
+
+        if (orders.isEmpty())
+        {
+            throw new CustomException("У вас нет заказов", HttpStatus.BAD_REQUEST);
+        }
+
+////        Long idOrder = order.getIdOrder();
+//        List<Long> idOrders = orders.stream()
+//                .map(i -> i.getIdOrder())
+//                .collect(Collectors.toList());
 //
-//        Session session = sessionService.getSession(userDTORequestPlace.getSessionNumber());
+////        LocalDateTime startSession = order.getSession().getStartSession();
+//        List<LocalDateTime> startSessions = orders.stream()
+//                .map(s -> s.getSession().getStartSession())
+//                .collect(Collectors.toList());
 //
-//        HallDTORequest hall = mapper.convertValue(session.getHall(), HallDTORequest.class);
-//        UserDTOResponsePlace result = mapper.convertValue(session, UserDTOResponsePlace.class);
-//        result.setHallDTORequest(hall);
-//        List<PlaceDTORequest> placeDTORequest = placeService.getAllPlaceByHall(hall.getNumberHall());
-//        result.setPlaceDTORequest(placeDTORequest);
+////        Integer price = order.getSession().getPrice();
+//        List<Integer> prices = orders.stream()
+//                .map(p -> p.getSession().getPrice())
+//                .collect(Collectors.toList());
 //
-//        return result;
-//    }
+////        String nameMovie = order.getSession().getMovie().getNameMovie();
+//        List<String> nameMovies = orders.stream()
+//                .map(m -> m.getSession().getMovie().getNameMovie())
+//                .collect(Collectors.toList());
 //
-//    @Override
-//    public UserDTOResponseBooking bookingPlace(UserDTORequestBooking userDTORequestBooking) {
+////        Integer durationMovie = order.getSession().getMovie().getDurationMovie();
+//        List<Integer> durationMovies = orders.stream()
+//                .map(d -> d.getSession().getMovie().getDurationMovie())
+//                .collect(Collectors.toList());
 //
-//        Place place = placeService.getPlace(userDTORequestBooking.getPlaceNumber());
-////        place.setBooking(Booking.RESERVATION);
-//        place.setUpdatedAt(LocalDateTime.now());
-//        place.setPlaceStatus(PlaceStatus.UPDATED);
-//        placeRepository.save(place);
+////        String nameCinema = order.getSession().getCinema().getNameCinema();
+//        List<String> nameCinemas = orders.stream()
+//                .map(c -> c.getSession().getCinema().getNameCinema())
+//                .collect(Collectors.toList());
 //
-//        String message = "Введите платежную инфрмацию";
-//        UserDTOResponseBooking result = mapper.convertValue(message, UserDTOResponseBooking.class);
-//        return result;
-//    }
+////        Integer numberHall = order.getSession().getHall().getNumberHall();
+//        List<Integer> numberHalls = orders.stream()
+//                .map(h -> h.getSession().getHall().getNumberHall())
+//                .collect(Collectors.toList());
+//
+////        Integer rowNumber = order.getPlace().getRowNumber();
+//        List<Integer> rowNumbers = orders.stream()
+//                .map(r -> r.getPlace().getRowNumber())
+//                .collect(Collectors.toList());
+//
+////        Integer placeNumberInRow = order.getPlace().getPlaceNumberInRow();
+//        List<Integer> placeNumbersInRow = orders.stream()
+//                .map(p -> p.getPlace().getPlaceNumberInRow())
+//                .collect(Collectors.toList());
+//
+//        List<UserDTOResponseOrder> response = orders.stream()
+//                .map(r -> mapper.convertValue(r, UserDTOResponseOrder.class))
+//                .collect(Collectors.toList());
+//
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setIdOrder(idOrders.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setStartSession(startSessions.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setPrice(prices.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setNameMovie(nameMovies.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setDurationMovie(durationMovies.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setNameCinema(nameCinemas.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setNumberHall(numberHalls.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setRowNumber(rowNumbers.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setPlaceNumberInRow(placeNumbersInRow.get(i));
+//        }
+
+        return orders
+                .stream()
+                .map(h ->
+                {
+                    UserDTOResponseOrder response = new UserDTOResponseOrder();
+                    response.setIdOrder (h
+                            .getIdOrder()
+                    );
+                    response.setStartSession(h.getSession().getStartSession());
+                    response.setPrice(h.getSession().getPrice());
+                    response.setNameMovie(h.getSession().getMovie().getNameMovie());
+                    response.setDurationMovie(h.getSession().getMovie().getDurationMovie());
+                    response.setNameCinema(h.getSession().getCinema().getNameCinema());
+                    response.setNumberHall(h.getSession().getHall().getNumberHall());
+                    response.setRowNumber(h.getPlace().getRowNumber());
+                    response.setPlaceNumberInRow(h.getPlace().getPlaceNumberInRow());
+
+                    return response;
+                })
+                .collect(Collectors.toList());
+
+//        return response;
+    }
 }

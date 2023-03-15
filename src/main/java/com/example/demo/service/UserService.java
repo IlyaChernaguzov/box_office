@@ -28,5 +28,10 @@ public interface UserService {
 
     List<UserDTOResponseSession> getAllSessionByCinema (String nameCinema);
 
-    UserDTOResponseTicket getTicket (Long idSession, Long idPlace);
+    UserDTOResponseTicket getTicket (Long idSession, Long idPlace, String email);
+
+    UserDTOResponseCancelBooking cancelBoking (Long idOrder);
+
+    List<UserDTOResponseOrder> getAllOrderByUser (String email);
+
 }

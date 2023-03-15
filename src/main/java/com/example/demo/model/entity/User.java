@@ -23,19 +23,13 @@ public class User {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Long idUser;
 
     @Column(name = "name_users")
     String name;
 
-    @Column(name = "age_users")
-    Integer age;
-
     @Column(name = "email", unique = true)
     String email;
-
-    @Column(name = "payInformation_users")
-    String payInformation;
 
     @CreationTimestamp
     @JsonIgnore

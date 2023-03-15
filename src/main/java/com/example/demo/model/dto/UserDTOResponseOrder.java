@@ -5,14 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Column;
-
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDTO {
-
-    String name;
-    String email;
-//    String payInformation;
+public class UserDTOResponseOrder extends UserDTOResponseTicket{
 }

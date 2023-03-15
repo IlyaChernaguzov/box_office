@@ -3,6 +3,7 @@ package com.example.demo.model.repository;
 import com.example.demo.model.entity.Order;
 import com.example.demo.model.entity.Place;
 import com.example.demo.model.entity.Session;
+import com.example.demo.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,6 +16,7 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByIdOrder(Long idOrder);
     List<Order> findByUser(String email);
+    List<Order> findOrderByUser(User user);
     List<Order> findByPlace(Integer placeNumber);
     List<Order> findBySession(Session session);
 

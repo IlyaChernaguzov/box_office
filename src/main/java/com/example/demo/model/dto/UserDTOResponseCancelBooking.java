@@ -1,18 +1,16 @@
 package com.example.demo.model.dto;
 
+import com.example.demo.model.enums.Booking;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Column;
-
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDTO {
+public class UserDTOResponseCancelBooking {
 
-    String name;
-    String email;
-//    String payInformation;
+    Long idOrder;
+    Booking booking;
 }
