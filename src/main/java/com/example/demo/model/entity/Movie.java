@@ -59,7 +59,7 @@ public class Movie {
     @Enumerated(EnumType.STRING)
     MovieStatus status = MovieStatus.CREATE;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Session> session;
 

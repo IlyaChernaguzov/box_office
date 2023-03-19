@@ -124,12 +124,20 @@ public class UserServiceimpl implements UserService {
                 .map(r -> mapper.convertValue(r.getPlace(), PlaceDTORequest.class))
                 .collect(Collectors.toList());
 
+        List<Long> ids = orders.stream()
+                .map(r -> r.getPlace().getIdPlace())
+                .collect(Collectors.toList());
+
         List<UserDTOResponsePlace> response = orders.stream()
                 .map(r -> mapper.convertValue(r, UserDTOResponsePlace.class))
                 .collect(Collectors.toList());
 
         for (int i = 0; i < response.size(); i++){
             response.get(i).setPlaceDTORequest(places.get(i));
+        }
+
+        for (int i = 0; i < response.size(); i++){
+            response.get(i).setIdPlace(ids.get(i));
         }
         return response;
     }
@@ -140,6 +148,10 @@ public class UserServiceimpl implements UserService {
 
         List<MovieDTOResponse> movies = sessions.stream()
                 .map(r -> mapper.convertValue(r.getMovie(), MovieDTOResponse.class))
+                .collect(Collectors.toList());
+
+        List<Long> ids = sessions.stream()
+                .map(r -> r.getIdSession())
                 .collect(Collectors.toList());
 
         List<Integer> halls = sessions.stream()
@@ -156,6 +168,10 @@ public class UserServiceimpl implements UserService {
 
         for (int i = 0; i < response.size(); i++){
             response.get(i).setNumberHall(halls.get(i));
+        }
+
+        for (int i = 0; i < response.size(); i++){
+            response.get(i).setIdSession(ids.get(i));
         }
         return response;
     }

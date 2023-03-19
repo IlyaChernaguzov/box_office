@@ -48,7 +48,7 @@ public class Place {
     @Enumerated(EnumType.STRING)
     PlaceStatus placeStatus = PlaceStatus.CREATE;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Order> order;
 

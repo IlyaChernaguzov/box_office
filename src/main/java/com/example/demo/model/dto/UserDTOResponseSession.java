@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDTOResponseSession {
 
+    Long idSession;
     LocalDateTime startSession;
     Integer price;
     MovieDTOResponse movieDTOResponse;
