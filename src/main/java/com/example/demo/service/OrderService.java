@@ -7,9 +7,9 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 public interface OrderService {
-    OrderDTOResponse create(OrderDTO orderDTO);
+    OrderDTO create(OrderDTOCreate orderDTOCreate);
 
-    OrderDTOResponse update(OrderDTO orderDTO, Long idOrder);
+    OrderDTO update(OrderDTO orderDTO);
 
     OrderDTOResponse get(Long idOrder);
 

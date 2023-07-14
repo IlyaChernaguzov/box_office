@@ -14,7 +14,7 @@ public class UserDTOResponseTicket {
 
     Long idOrder;
 
-    LocalDateTime startSession;
+    String startSession;
     Integer price;
 
     String nameMovie;

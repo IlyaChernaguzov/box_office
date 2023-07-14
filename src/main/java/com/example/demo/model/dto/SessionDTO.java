@@ -1,6 +1,5 @@
 package com.example.demo.model.dto;
 
-import com.example.demo.model.enums.Booking;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,9 +8,11 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderDTO {
+public class SessionDTO {
 
-    Long idOrder;
-    Long idPlace;
     Long idSession;
+    String startSession;
+    Integer price;
+    MovieDTO movieDTO;
+    HallDTO hallDTO;
 }

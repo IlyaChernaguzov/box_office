@@ -33,18 +33,22 @@ import java.util.stream.Collectors;
 public class OrderServiceimpl implements OrderService {
 
     private final OrderRepository orderRepository;
-//    private final UserRepository userRepository;
-    private final PlaceRepository placeRepository;
-    private final SessionRepository sessionRepository;
-//    private final UserService userService;
     private final PlaceService placeService;
     private final SessionService sessionService;
     private final ObjectMapper mapper;
 
     @Override
-    public OrderDTOResponse create(OrderDTO orderDTO) {
+    public OrderDTO create(OrderDTOCreate orderDTOCreate) {
+
+        Session session = sessionService.getSession(orderDTOCreate.getIdSession());
+        Place place = placeService.getPlace(orderDTOCreate.getIdPlace());
+
+        if (!Objects.equals(session.getHall().getIdHall(), place.getHall().getIdHall())){
+            throw new CustomException("Место и сеанс находятся в разных залах", HttpStatus.BAD_REQUEST);
+        }
+
         orderRepository
-                .findOrderBySessionAndPlace(sessionService.getSession(orderDTO.getIdSession()), placeService.getPlace(orderDTO.getIdPlace()))
+                .findOrderBySessionAndPlace(session, place)
                 .ifPresent(
                         c -> {throw new CustomException("Такая бронь уже существует", HttpStatus.BAD_REQUEST);
                         });
@@ -61,43 +65,58 @@ public class OrderServiceimpl implements OrderService {
 
 
         Order order = new Order();
-//        order.setUser(userService.getUser(orderDTORequest.getEmail()));
-        order.setPlace(placeService.getPlace(orderDTO.getIdPlace()));
-        order.setSession(sessionService.getSession(orderDTO.getIdSession()));
+        order.setPlace(placeService.getPlace(orderDTOCreate.getIdPlace()));
+        order.setSession(sessionService.getSession(orderDTOCreate.getIdSession()));
         order.setBooking(Booking.FREE);
         order.setCreatedAt(LocalDateTime.now());
-        Order save = orderRepository.save(order);
-//        mapper.convertValue(save, OrderDTOResponse.class);
-
-        return get(save.getIdOrder());
+        return getOrderDTO(order);
     }
 
     @Override
-    public OrderDTOResponse update(OrderDTO orderDTO, Long idOrder) {
-        Order order = getOrder(idOrder);
+    public OrderDTO update(OrderDTO orderDTO) {
+        Order order = getOrder(orderDTO.getIdOrder());
 
 //        order.setUser(orderDTOUpdate.getEmail() == null ? order.getUser() : userService.getUser(orderDTO.getEmail()));
         order.setPlace(orderDTO.getIdPlace() == null ? order.getPlace() : placeService.getPlace(orderDTO.getIdPlace()));
         order.setSession(orderDTO.getIdSession() == null ? order.getSession() : sessionService.getSession(orderDTO.getIdSession()));
+
+        if (!Objects.equals(order.getSession().getHall().getIdHall(), order.getPlace().getHall().getIdHall())){
+            throw new CustomException("Место и сеанс находятся в разных залах", HttpStatus.BAD_REQUEST);
+        }
+
         order.setUpdatedAt(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.UPDATED);
-        Order save = orderRepository.save(order);
-        OrderDTOResponse response = get(save.getIdOrder());
 
-        return response;
+        return getOrderDTO(order);
+    }
+
+    private OrderDTO getOrderDTO(Order order) {
+        Order save = orderRepository.save(order);
+
+        OrderDTO result = mapper.convertValue(save, OrderDTO.class);
+        result.setIdOrder(save.getIdOrder());
+        result.setIdPlace(save.getPlace().getIdPlace());
+        result.setIdSession(save.getSession().getIdSession());
+        return result;
     }
 
     @Override
     public OrderDTOResponse get(Long idOrder) {
         Order order = getOrder(idOrder);
-//        UserDTO user = mapper.convertValue(order.getUser(), UserDTO.class);
-        PlaceDTORequest place = mapper.convertValue(order.getPlace(), PlaceDTORequest.class);
-        SessionDTORequest session = mapper.convertValue(order.getSession(), SessionDTORequest.class);
+        UserDTO user = mapper.convertValue(order.getUser(), UserDTO.class);
+//        PlaceDTORequest place = mapper.convertValue(order.getPlace(), PlaceDTORequest.class);
+//        SessionDTORequest session = mapper.convertValue(order.getSession(), SessionDTORequest.class);
         OrderDTOResponse result = mapper.convertValue(order, OrderDTOResponse.class);
-//        result.setUserDTO(user);
-        result.setPlaceDTORequest(place);
-        result.setSessionDTORequest(session);
-        result.setIdOrder(idOrder);
+        result.setIdOrder(order.getIdOrder());
+        result.setNameMovie(order.getSession().getMovie().getNameMovie());
+        result.setNameCinema(order.getPlace().getHall().getCinema().getNameCinema());
+        result.setNumberHall(order.getPlace().getHall().getNumberHall());
+        result.setRowNumber(order.getPlace().getRowNumber());
+        result.setPlaceNumberInRow(order.getPlace().getPlaceNumberInRow());
+        result.setStartSession(order.getSession().getStartSession());
+        result.setPrice(order.getSession().getPrice());
+        result.setBooking(order.getBooking());
+        result.setUserDTO(user);
 
         return result;
     }
@@ -162,7 +181,25 @@ public class OrderServiceimpl implements OrderService {
         Page<Order> pageResult = orderRepository.findAll(pageRequest);
 
         List<OrderDTOResponse> collect = pageResult.getContent().stream()
-                .map(c -> mapper.convertValue(c, OrderDTOResponse.class))
+                .map(h ->
+                {
+                    OrderDTOResponse response = new OrderDTOResponse();
+                    response.setIdOrder (h
+                            .getIdOrder()
+                    );
+                    response.setIdOrder(h.getIdOrder());
+                    response.setNameMovie(h.getSession().getMovie().getNameMovie());
+                    response.setNameCinema(h.getPlace().getHall().getCinema().getNameCinema());
+                    response.setNumberHall(h.getPlace().getHall().getNumberHall());
+                    response.setRowNumber(h.getPlace().getRowNumber());
+                    response.setPlaceNumberInRow(h.getPlace().getPlaceNumberInRow());
+                    response.setStartSession(h.getSession().getStartSession());
+                    response.setPrice(h.getSession().getPrice());
+                    response.setBooking(h.getBooking());
+                    response.setUserDTO(mapper.convertValue(h.getUser(), UserDTO.class));
+
+                    return response;
+                })
                 .collect(Collectors.toList());
 
         return collect;
@@ -171,33 +208,63 @@ public class OrderServiceimpl implements OrderService {
     @Override
     public List<OrderDTOResponse> getAllOrderBySession(Long idSession) {
 
-        List<Order> orders = orderRepository.findBySession(sessionService.getSession(idSession));
+        Session session = sessionService.getSession(idSession);
+
+        List<Order> orders = orderRepository.findOrderBySession(session);
+
+//        if (orders.isEmpty())
+//        {
+//            throw new CustomException("Такого сеанса нет", HttpStatus.BAD_REQUEST);
+//        }
+
+        return orders
+                .stream()
+                .map(h ->
+                {
+                    OrderDTOResponse response = new OrderDTOResponse();
+                    response.setIdOrder (h
+                            .getIdOrder()
+                    );
+                    response.setIdOrder(h.getIdOrder());
+                    response.setNameMovie(h.getSession().getMovie().getNameMovie());
+                    response.setNameCinema(h.getPlace().getHall().getCinema().getNameCinema());
+                    response.setNumberHall(h.getPlace().getHall().getNumberHall());
+                    response.setRowNumber(h.getPlace().getRowNumber());
+                    response.setPlaceNumberInRow(h.getPlace().getPlaceNumberInRow());
+                    response.setStartSession(h.getSession().getStartSession());
+                    response.setPrice(h.getSession().getPrice());
+                    response.setBooking(h.getBooking());
+                    response.setUserDTO(mapper.convertValue(h.getUser(), UserDTO.class));
+
+                    return response;
+                })
+                .collect(Collectors.toList());
 
 //       List<UserDTO> users = orders.stream()
 //                .map(r -> mapper.convertValue(r.getUser(), UserDTO.class))
 //                .collect(Collectors.toList());
 
-        List<PlaceDTORequest> places = orders.stream()
-                .map(r -> mapper.convertValue(r.getPlace(), PlaceDTORequest.class))
-                .collect(Collectors.toList());
-
-        List<SessionDTORequest> sessions = orders.stream()
-                .map(r -> mapper.convertValue(r.getSession(), SessionDTORequest.class))
-                .collect(Collectors.toList());
-
-        List<OrderDTOResponse> response = orders.stream()
-                .map(r -> mapper.convertValue(r, OrderDTOResponse.class))
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < response.size(); i++){
-            response.get(i).setPlaceDTORequest(places.get(i));
-        }
-
-        for (int i = 0; i < response.size(); i++){
-            response.get(i).setSessionDTORequest(sessions.get(i));
-        }
-
-        return response;
+//        List<PlaceDTORequest> places = orders.stream()
+//                .map(r -> mapper.convertValue(r.getPlace(), PlaceDTORequest.class))
+//                .collect(Collectors.toList());
+//
+//        List<SessionDTORequest> sessions = orders.stream()
+//                .map(r -> mapper.convertValue(r.getSession(), SessionDTORequest.class))
+//                .collect(Collectors.toList());
+//
+//        List<OrderDTOResponse> response = orders.stream()
+//                .map(r -> mapper.convertValue(r, OrderDTOResponse.class))
+//                .collect(Collectors.toList());
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setPlaceDTORequest(places.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setSessionDTORequest(sessions.get(i));
+//        }
+//
+//        return response;
     }
 
 }

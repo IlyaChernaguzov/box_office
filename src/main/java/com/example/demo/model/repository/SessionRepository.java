@@ -13,6 +13,9 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     Optional<Session> findSessionByIdSession(Long idSession);
 
     List<Session> findByCinema(Cinema cinema);
+    List<Session> findByMovie(Movie movie);
 
-    Optional<Session>  findSessionByHallAndStartSession(Hall hall, LocalDateTime startSession);
+//    List<Session> findByHall(Hall hall);
+
+    Optional<Session>  findSessionByHallAndStartSession(Hall hall, String startSession);
 }

@@ -3,6 +3,7 @@ package com.example.demo.model.entity;
 import com.example.demo.model.enums.Genre;
 import com.example.demo.model.enums.MovieStatus;
 import com.example.demo.model.enums.Rating;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class Movie {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Long idMovie;
 
     @Column(name = "name_movie", unique = true)
     String nameMovie;
@@ -33,9 +34,11 @@ public class Movie {
     Integer durationMovie;
 
     @Column(name = "start_movie")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime startRental;
 
     @Column(name = "end_movie")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime endRental;
 
     @Column(name = "rating_movie")
@@ -57,9 +60,9 @@ public class Movie {
 
     @JsonIgnore
     @Enumerated(EnumType.STRING)
-    MovieStatus status = MovieStatus.CREATE;
+    MovieStatus movieStatus = MovieStatus.CREATE;
 
-//    @JsonIgnore
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Session> session;
 

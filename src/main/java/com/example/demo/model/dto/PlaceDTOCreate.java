@@ -8,10 +8,8 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HallDTORequest {
-
-    Integer numberHall;
-    Integer places;
-    Integer rows;
-
+public class PlaceDTOCreate {
+    Integer rowNumber;
+    Integer placeNumberInRow;
+    Long idHall;
 }

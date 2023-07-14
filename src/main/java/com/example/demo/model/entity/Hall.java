@@ -23,7 +23,7 @@ public class Hall {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Long idHall;
 
     @Column(name = "number_hall")
     Integer numberHall;
@@ -47,15 +47,15 @@ public class Hall {
     @Enumerated(EnumType.STRING)
     HallStatus hallStatus = HallStatus.CREATE;
 
-//    @JsonIgnore
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Session> session;
 
-//    @JsonIgnore
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Place> place;
 
-//    @JsonIgnore
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     Cinema cinema;
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface HallRepository extends JpaRepository<Hall, Long> {
-    Optional<Hall> findById(Long id);
-    List<Hall> findHallByCinema(Cinema cinema);
+    Optional<Hall> findByIdHall(Long idHall);
+    List<Hall> findByCinema(Cinema cinema);
     Optional<Hall> findHallByCinemaAndNumberHall(Cinema cinema, Integer numberHall);
 }

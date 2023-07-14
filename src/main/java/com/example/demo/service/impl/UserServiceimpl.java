@@ -5,12 +5,8 @@ import com.example.demo.model.dto.*;
 import com.example.demo.model.entity.*;
 import com.example.demo.model.enums.Booking;
 import com.example.demo.model.enums.OrderStatus;
-import com.example.demo.model.enums.PlaceStatus;
 import com.example.demo.model.enums.UserStatus;
-import com.example.demo.model.repository.OrderRepository;
-import com.example.demo.model.repository.PlaceRepository;
-import com.example.demo.model.repository.SessionRepository;
-import com.example.demo.model.repository.UserRepository;
+import com.example.demo.model.repository.*;
 import com.example.demo.service.*;
 import com.example.demo.utils.PaginationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,10 +20,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.mail.internet.InternetAddress;
+
 
 @Slf4j
 @Service
@@ -39,10 +35,8 @@ public class UserServiceimpl implements UserService {
     private final SessionRepository sessionRepository;
     private final SessionService sessionService;
     private final CinemaService cinemaService;
-    private final HallService hallService;
-    private final PlaceService placeService;
+    private final MovieService movieService;
     private final OrderService orderService;
-    private final PlaceRepository placeRepository;
     private final ObjectMapper mapper;
 
     @Override
@@ -52,12 +46,12 @@ public class UserServiceimpl implements UserService {
             InternetAddress emailAddr = new InternetAddress(userDTO.getEmail());
             emailAddr.validate();
         } catch (Exception ex) {
-            log.error("[Create User] email is not valid" + userDTO);
-            throw new CustomException("Невалидный email", HttpStatus.BAD_REQUEST);
+            log.error("[Create User] email is not valid" + userDTO.getEmail());
+            throw new CustomException("Invalid email", HttpStatus.BAD_REQUEST);
         }
 
         userRepository.findByEmail(userDTO.getEmail()).ifPresent(
-                c -> {throw new CustomException("Пользователь с эл.почтой: " + userDTO.getEmail() + " уже существует", HttpStatus.BAD_REQUEST);
+                c -> {throw new CustomException("User with email: " + userDTO.getEmail() + " exists", HttpStatus.BAD_REQUEST);
                 }
         );
 
@@ -71,7 +65,7 @@ public class UserServiceimpl implements UserService {
     public UserDTO update(UserDTO userDTO) {
         User user = getUser(userDTO.getEmail());
 
-        user.setEmail(userDTO.getEmail() == null ? user.getEmail() : userDTO.getEmail());
+//        user.setEmail(userDTO.getEmail() == null ? user.getEmail() : userDTO.getEmail());
         user.setName(userDTO.getName() == null ? user.getName() : userDTO.getName());
         user.setUpdatedAt(LocalDateTime.now());
         user.setUserStatus(UserStatus.UPDATED);
@@ -100,7 +94,7 @@ public class UserServiceimpl implements UserService {
     @Override
     public User getUser(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(()-> new CustomException("Пользователь с эл.почтой: " + email + " не найден", HttpStatus.NOT_FOUND));
+                .orElseThrow(()-> new CustomException("User with email: " + email + " not founded", HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -117,74 +111,142 @@ public class UserServiceimpl implements UserService {
 
     @Override
     public List<UserDTOResponsePlace> getAllOrderBySession(Long idSession) {
+        Session session = sessionService.getSession(idSession);
 
-        List<Order> orders = orderRepository.findBySession(sessionService.getSession(idSession));
+        List<Order> orders = orderRepository.findOrderBySession(session);
 
-        List<PlaceDTORequest> places = orders.stream()
-                .map(r -> mapper.convertValue(r.getPlace(), PlaceDTORequest.class))
+        return orders
+                .stream()
+                .map(h ->
+                {
+                    UserDTOResponsePlace response = new UserDTOResponsePlace();
+                    response.setIdOrder (h.getIdOrder());
+                    response.setRowNumber(h.getPlace().getRowNumber());
+                    response.setPlaceNumberInRow(h.getPlace().getPlaceNumberInRow());
+                    response.setBooking(h.getBooking());
+
+                    return response;
+                })
                 .collect(Collectors.toList());
 
-        List<Long> ids = orders.stream()
-                .map(r -> r.getPlace().getIdPlace())
-                .collect(Collectors.toList());
-
-        List<UserDTOResponsePlace> response = orders.stream()
-                .map(r -> mapper.convertValue(r, UserDTOResponsePlace.class))
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < response.size(); i++){
-            response.get(i).setPlaceDTORequest(places.get(i));
-        }
-
-        for (int i = 0; i < response.size(); i++){
-            response.get(i).setIdPlace(ids.get(i));
-        }
-        return response;
+//        List<PlaceDTO> places = orders.stream()
+//                .map(r -> mapper.convertValue(r.getPlace(), PlaceDTO.class))
+//                .collect(Collectors.toList());
+//
+//        List<Long> ids = orders.stream()
+//                .map(r -> r.getPlace().getIdPlace())
+//                .collect(Collectors.toList());
+//
+//        List<UserDTOResponsePlace> response = orders.stream()
+//                .map(r -> mapper.convertValue(r, UserDTOResponsePlace.class))
+//                .collect(Collectors.toList());
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setPlaceDTO(places.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setIdPlace(ids.get(i));
+//        }
+//        return response;
     }
 
     @Override
-    public List<UserDTOResponseSession> getAllSessionByCinema(String nameCinema) {
-        List<Session> sessions = sessionRepository.findByCinema(cinemaService.getCinema(nameCinema));
+    public List<UserDTOResponseSession> getAllSessionByCinema(Long idCinema) {
 
-        List<MovieDTOResponse> movies = sessions.stream()
-                .map(r -> mapper.convertValue(r.getMovie(), MovieDTOResponse.class))
+        Cinema cinema = cinemaService.getCinema(idCinema);
+
+        List<Session> sessions = sessionRepository.findByCinema(cinema);
+
+        return sessions
+                .stream()
+                .map(h ->
+                {
+                    UserDTOResponseSession response = new UserDTOResponseSession();
+                    response.setIdSession (h.getIdSession());
+                    response.setStartSession(h.getStartSession());
+                    response.setPrice(h.getPrice());
+                    response.setNameMovie(h.getMovie().getNameMovie());
+                    response.setDurationMovie(h.getMovie().getDurationMovie());
+                    response.setRatingMovie(h.getMovie().getRatingMovie());
+                    response.setGenreMovie(h.getMovie().getGenreMovie());
+                    response.setNumberHall(h.getHall().getNumberHall());
+                    response.setNameCinema(h.getCinema().getNameCinema());
+
+                    return response;
+                })
                 .collect(Collectors.toList());
 
-        List<Long> ids = sessions.stream()
-                .map(r -> r.getIdSession())
-                .collect(Collectors.toList());
 
-        List<Integer> halls = sessions.stream()
-                .map(r -> r.getHall().getNumberHall())
-                .collect(Collectors.toList());
-
-        List<UserDTOResponseSession> response = sessions.stream()
-                .map(r -> mapper.convertValue(r, UserDTOResponseSession.class))
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < response.size(); i++){
-            response.get(i).setMovieDTOResponse(movies.get(i));
-        }
-
-        for (int i = 0; i < response.size(); i++){
-            response.get(i).setNumberHall(halls.get(i));
-        }
-
-        for (int i = 0; i < response.size(); i++){
-            response.get(i).setIdSession(ids.get(i));
-        }
-        return response;
+//        List<MovieDTOResponse> movies = sessions.stream()
+//                .map(r -> mapper.convertValue(r.getMovie(), MovieDTOResponse.class))
+//                .collect(Collectors.toList());
+//
+//        List<Long> ids = sessions.stream()
+//                .map(Session::getIdSession)
+//                .collect(Collectors.toList());
+//
+//        List<Integer> halls = sessions.stream()
+//                .map(r -> r.getHall().getNumberHall())
+//                .collect(Collectors.toList());
+//
+//        List<UserDTOResponseSession> response = sessions.stream()
+//                .map(r -> mapper.convertValue(r, UserDTOResponseSession.class))
+//                .collect(Collectors.toList());
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setMovieDTOResponse(movies.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setNumberHall(halls.get(i));
+//        }
+//
+//        for (int i = 0; i < response.size(); i++){
+//            response.get(i).setIdSession(ids.get(i));
+//        }
+//        return response;
     }
 
     @Override
-    public UserDTOResponseTicket getTicket(Long idSession, Long idPlace, String email) {
-        Optional<Order> optional = orderRepository
-                .findOrderBySessionAndPlace(sessionService.getSession(idSession), placeService.getPlace(idPlace));
+    public List<UserDTOResponseSession> getAllSessionByMovie(Long idMovie){
+        Movie movie = movieService.getMovie(idMovie);
 
-        if (!optional.isPresent())
-        {
-            throw new CustomException("Место не найдено", HttpStatus.BAD_REQUEST);
-        }
+        List<Session> sessions = sessionRepository.findByMovie(movie);
+
+        return sessions
+                .stream()
+                .map(h ->
+                {
+                    UserDTOResponseSession response = new UserDTOResponseSession();
+                    response.setIdSession (h.getIdSession());
+                    response.setStartSession(h.getStartSession());
+                    response.setPrice(h.getPrice());
+                    response.setNameMovie(h.getMovie().getNameMovie());
+                    response.setDurationMovie(h.getMovie().getDurationMovie());
+                    response.setRatingMovie(h.getMovie().getRatingMovie());
+                    response.setGenreMovie(h.getMovie().getGenreMovie());
+                    response.setNumberHall(h.getHall().getNumberHall());
+                    response.setNameCinema(h.getCinema().getNameCinema());
+
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDTOResponseTicket getTicket(Long idOrder, String email) {
+
+//        Session session = sessionService.getSession(idSession);
+//        Place place = placeService.getPlace(idPlace);
+//
+//        Optional<Order> optional = orderRepository
+//                .findOrderBySessionAndPlace(session, place);
+//
+//        if (!optional.isPresent())
+//        {
+//            throw new CustomException("Место не найдено", HttpStatus.BAD_REQUEST);
+//        }
 
 //        List<Order> orders = orderRepository.findBySession(sessionService.getSession(idSession))
 //                .stream()
@@ -197,22 +259,22 @@ public class UserServiceimpl implements UserService {
 //        }
 
 //        Order order = orders.get(0);
-        Order order = optional.get();
+//        Order order = optional.get();
 
-        if (order.getBooking().equals(Booking.RESERVATION))
-        {
-            throw new CustomException("Это место уже забронировано", HttpStatus.BAD_REQUEST);
+        Order order = orderService.getOrder(idOrder);
+
+        if (order.getBooking().equals(Booking.RESERVATION)) {
+            throw new CustomException("This is Place RESERVATION", HttpStatus.BAD_REQUEST);
         }
 
 
 
-        Long idOrder = order.getIdOrder();
-
-        LocalDateTime startSession = order.getSession().getStartSession();
+//        Long idOrder = order.getIdOrder();
+        String startSession = order.getSession().getStartSession();
         Integer price = order.getSession().getPrice();
         String nameMovie = order.getSession().getMovie().getNameMovie();
         Integer durationMovie = order.getSession().getMovie().getDurationMovie();
-        String nameCinema = order.getSession().getCinema().getNameCinema();
+        String nameCinema = order.getPlace().getHall().getCinema().getNameCinema();
         Integer numberHall = order.getSession().getHall().getNumberHall();
         Integer rowNumber = order.getPlace().getRowNumber();
         Integer placeNumberInRow = order.getPlace().getPlaceNumberInRow();
@@ -224,7 +286,7 @@ public class UserServiceimpl implements UserService {
         Order save = orderRepository.save(order);
 
         UserDTOResponseTicket response = mapper.convertValue(save, UserDTOResponseTicket.class);
-        response.setIdOrder(idOrder);
+        response.setIdOrder(save.getIdOrder());
         response.setStartSession(startSession);
         response.setPrice(price);
         response.setNameMovie(nameMovie);
@@ -256,11 +318,12 @@ public class UserServiceimpl implements UserService {
 
     @Override
     public List<UserDTOResponseOrder> getAllOrderByUser(String email) {
+
         List<Order> orders = orderRepository.findOrderByUser(getUser(email));
 
         if (orders.isEmpty())
         {
-            throw new CustomException("У вас нет заказов", HttpStatus.BAD_REQUEST);
+            throw new CustomException("Ticket not found", HttpStatus.BAD_REQUEST);
         }
 
 //        List<Long> idOrders = orders.stream()
@@ -351,7 +414,7 @@ public class UserServiceimpl implements UserService {
                     response.setPrice(h.getSession().getPrice());
                     response.setNameMovie(h.getSession().getMovie().getNameMovie());
                     response.setDurationMovie(h.getSession().getMovie().getDurationMovie());
-                    response.setNameCinema(h.getSession().getCinema().getNameCinema());
+                    response.setNameCinema(h.getPlace().getHall().getCinema().getNameCinema());
                     response.setNumberHall(h.getSession().getHall().getNumberHall());
                     response.setRowNumber(h.getPlace().getRowNumber());
                     response.setPlaceNumberInRow(h.getPlace().getPlaceNumberInRow());

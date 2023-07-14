@@ -22,15 +22,15 @@ public class OrderController {
 
     @PostMapping
     @Operation(summary = "Создание заказа")
-    private ResponseEntity<OrderDTOResponse> createOrder(@RequestBody OrderDTO orderDTO){
-        return ResponseEntity.ok(orderService.create(orderDTO));
+    private ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTOCreate orderDTOCreate){
+        return ResponseEntity.ok(orderService.create(orderDTOCreate));
 
     }
 
     @PutMapping
     @Operation(summary = "Обновление данных заказа")
-    private ResponseEntity<OrderDTOResponse> updateOrder(@RequestBody OrderDTO orderDTO, @RequestParam Long idOrder){
-        return ResponseEntity.ok(orderService.update(orderDTO, idOrder));
+    private ResponseEntity<OrderDTO> updateOrder(@RequestBody OrderDTO orderDTO){
+        return ResponseEntity.ok(orderService.update(orderDTO));
 
     }
 

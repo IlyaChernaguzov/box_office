@@ -44,7 +44,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     UserStatus userStatus = UserStatus.CREATE;
 
-//    @JsonIgnore
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Order> order;
 

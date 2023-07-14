@@ -23,7 +23,7 @@ public class Cinema {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Long idCinema;
 
     @Column(name = "name_cinema", unique = true)
     String nameCinema;

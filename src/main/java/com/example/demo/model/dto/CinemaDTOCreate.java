@@ -8,7 +8,11 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HallDTOResponse extends HallDTORequest{
+public class CinemaDTOCreate {
 
-    CinemaDTO cinemaDTO;
+    String nameCinema;
+    String index;
+    String city;
+    String address;
+    Integer halls;
 }

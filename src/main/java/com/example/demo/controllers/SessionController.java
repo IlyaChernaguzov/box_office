@@ -1,7 +1,8 @@
 package com.example.demo.controllers;
 
-import com.example.demo.model.dto.SessionDTORequest;
-import com.example.demo.model.dto.SessionDTOResponse;
+import com.example.demo.model.dto.SessionDTOCreate;
+import com.example.demo.model.dto.SessionDTO;
+import com.example.demo.model.dto.SessionDTOUpdate;
 import com.example.demo.service.SessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,22 +24,21 @@ public class SessionController {
 
     @PostMapping
     @Operation(summary = "Создание сеанса")
-    private ResponseEntity<SessionDTOResponse> createSession(@RequestBody SessionDTORequest sessionDTORequest){
-        return ResponseEntity.ok(sessionService.create(sessionDTORequest));
+    private ResponseEntity<SessionDTO> createSession(@RequestBody SessionDTOCreate sessionDTOCreate){
+        return ResponseEntity.ok(sessionService.create(sessionDTOCreate));
 
     }
 
     @PutMapping
     @Operation(summary = "Обновление данных сеанса")
-    private ResponseEntity<SessionDTOResponse> updateSession(@RequestBody SessionDTORequest sessionDTORequest,
-                                                             @RequestParam Long idSession){
-        return ResponseEntity.ok(sessionService.update(sessionDTORequest, idSession));
+    private ResponseEntity<SessionDTO> updateSession(@RequestBody SessionDTOUpdate sessionDTOUpdate){
+        return ResponseEntity.ok(sessionService.update(sessionDTOUpdate));
 
     }
 
     @GetMapping
     @Operation(summary = "Посмотреть сеанс")
-    private ResponseEntity<SessionDTOResponse> getSession(@RequestParam Long idSession){
+    private ResponseEntity<SessionDTO> getSession(@RequestParam Long idSession){
         return ResponseEntity.ok(sessionService.get(idSession));
 
     }
@@ -75,10 +75,10 @@ public class SessionController {
 
     @GetMapping("/all")// пагинация и сортировка
     @Operation(summary = "Сортировать сеансы")
-    public List<SessionDTOResponse> getAllSession(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                                 @RequestParam(required = false, defaultValue = "10") Integer perPage,
-                                                 @RequestParam(required = false, defaultValue = "idSession") String sort,
-                                                 @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
+    public List<SessionDTO> getAllSession(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                          @RequestParam(required = false, defaultValue = "10") Integer perPage,
+                                          @RequestParam(required = false, defaultValue = "idSession") String sort,
+                                          @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
         return sessionService.getAllSession(page, perPage, sort, order);
 
     }

@@ -68,18 +68,24 @@ public class UserController {
     }
 
     @GetMapping("/allSessionByCinema")
-    @Operation(summary = "Получение пользователем списка сеансов")
-    public List<UserDTOResponseSession> getSessionByCinema(@RequestParam String nameCinema){
-        return userService.getAllSessionByCinema(nameCinema);
+    @Operation(summary = "Получение пользователем списка сеансов по кинотеатру")
+    public List<UserDTOResponseSession> getSessionByCinema(@RequestParam Long idCinema){
+        return userService.getAllSessionByCinema(idCinema);
+
+    }
+
+    @GetMapping("/allSessionByMovie")
+    @Operation(summary = "Получение пользователем списка сеансов по фильму")
+    public List<UserDTOResponseSession> getSessionByMovie(@RequestParam Long idMovie){
+        return userService.getAllSessionByMovie(idMovie);
 
     }
 
     @GetMapping("/getTicket")
     @Operation(summary = "Получение билета")
-    private ResponseEntity<UserDTOResponseTicket> getTicket(@RequestParam Long idSession,
-                                                            @RequestParam Long idPlace,
+    private ResponseEntity<UserDTOResponseTicket> getTicket(@RequestParam Long idOrder,
                                                             @RequestParam String email){
-        return ResponseEntity.ok(userService.getTicket(idSession, idPlace, email));
+        return ResponseEntity.ok(userService.getTicket(idOrder, email));
 
     }
 

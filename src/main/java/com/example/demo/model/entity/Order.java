@@ -22,11 +22,12 @@ import java.util.List;
 public class Order {
 
     @Id
-//    @JsonIgnore
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idOrder;
 
     @Column(name = "place_booking")
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     Booking booking;
 
@@ -43,15 +44,15 @@ public class Order {
     @Enumerated(EnumType.STRING)
     OrderStatus orderStatus = OrderStatus.CREATE;
 
-//    @JsonIgnore
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     User user;
 
-//    @JsonIgnore
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     Place place;
 
-//    @JsonIgnore
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     Session session;
 }

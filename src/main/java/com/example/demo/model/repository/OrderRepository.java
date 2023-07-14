@@ -15,10 +15,10 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByIdOrder(Long idOrder);
-    List<Order> findByUser(String email);
+//    List<Order> findByUser(String email);
     List<Order> findOrderByUser(User user);
-    List<Order> findByPlace(Integer placeNumber);
-    List<Order> findBySession(Session session);
+//    List<Order> findByPlace(Integer placeNumber);
+    List<Order> findOrderBySession(Session session);
 
     Optional<Order> findOrderBySessionAndPlace(Session session, Place place);
 

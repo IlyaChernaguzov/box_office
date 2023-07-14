@@ -8,9 +8,11 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlaceDTOResponse extends PlaceDTORequest{
+public class HallDTO {
 
-    Long idPlace;
-    HallDTORequest hallDTORequest;
-
+    Long idHall;
+    Integer numberHall;
+    Integer places;
+    Integer rows;
+    Long idCinema;
 }

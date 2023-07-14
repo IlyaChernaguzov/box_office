@@ -1,5 +1,7 @@
 package com.example.demo.model.dto;
 
+import com.example.demo.model.enums.Genre;
+import com.example.demo.model.enums.Rating;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,8 +15,12 @@ import java.time.LocalDateTime;
 public class UserDTOResponseSession {
 
     Long idSession;
-    LocalDateTime startSession;
+    String startSession;
     Integer price;
-    MovieDTOResponse movieDTOResponse;
+    String nameMovie;
+    Integer durationMovie;
+    Rating ratingMovie;
+    Genre genreMovie;
     Integer numberHall;
+    String nameCinema;
 }

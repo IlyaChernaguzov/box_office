@@ -5,16 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SessionDTOResponse {
+public class HallDTOCreate {
 
-    Long idSession;
-    LocalDateTime startSession;
-    Integer price;
-    MovieDTO movieDTO;
-    HallDTOResponse hallDTOResponse;
+    Integer numberHall;
+    Integer places;
+    Integer rows;
+    Long idCinema;
+
 }

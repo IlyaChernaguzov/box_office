@@ -12,9 +12,11 @@ import javax.persistence.Column;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CinemaDTO {
 
+    Long idCinema;
     String nameCinema;
     String index;
     String city;
     String address;
     Integer halls;
+
 }

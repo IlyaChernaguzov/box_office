@@ -1,7 +1,7 @@
 package com.example.demo.controllers;
 
-import com.example.demo.model.dto.PlaceDTORequest;
-import com.example.demo.model.dto.PlaceDTOResponse;
+import com.example.demo.model.dto.PlaceDTO;
+import com.example.demo.model.dto.PlaceDTOCreate;
 import com.example.demo.service.PlaceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,24 +23,21 @@ public class PlaceController {
 
     @PostMapping
     @Operation(summary = "Создание места")
-    private ResponseEntity<PlaceDTOResponse> createPlace(@RequestBody PlaceDTORequest placeDTORequest,
-                                                         @RequestParam  Long id){
-        return ResponseEntity.ok(placeService.create(placeDTORequest, id));
+    private ResponseEntity<PlaceDTO> createPlace(@RequestBody PlaceDTOCreate placeDTOCreate){
+        return ResponseEntity.ok(placeService.create(placeDTOCreate));
 
     }
 
     @PutMapping
     @Operation(summary = "Обновление места")
-    private ResponseEntity<PlaceDTOResponse> updatePlace(@RequestBody PlaceDTORequest placeDTORequest,
-                                                         @RequestParam Long id,
-                                                         @RequestParam  Long idPlace){
-        return ResponseEntity.ok(placeService.update(placeDTORequest, id, idPlace));
+    private ResponseEntity<PlaceDTO> updatePlace(@RequestBody PlaceDTO placeDTO){
+        return ResponseEntity.ok(placeService.update(placeDTO));
 
     }
 
     @GetMapping
     @Operation(summary = "Посмотреть место")
-    private ResponseEntity<PlaceDTOResponse> getPlace(@RequestParam Long idPlace){//возвращает именно ответ CarDTOResponse
+    private ResponseEntity<PlaceDTO> getPlace(@RequestParam Long idPlace){//возвращает именно ответ CarDTOResponse
         return ResponseEntity.ok(placeService.get(idPlace));
 
     }
@@ -62,18 +59,18 @@ public class PlaceController {
 
     @GetMapping("/all")
     @Operation(summary = "Сортировать места")
-    public List<PlaceDTORequest> getAllPlace(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                             @RequestParam(required = false, defaultValue = "10") Integer perPage,
-                                             @RequestParam(required = false, defaultValue = "idPlace") String sort,
-                                             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
+    public List<PlaceDTO> getAllPlace(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                      @RequestParam(required = false, defaultValue = "10") Integer perPage,
+                                      @RequestParam(required = false, defaultValue = "idPlace") String sort,
+                                      @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
         return placeService.getAllPlace(page, perPage, sort, order);
 
     }
 
     @GetMapping("/allPlaceByHall")
     @Operation(summary = "Сортировать места по холлу")
-    public List<PlaceDTORequest> getAllPlaceByHall(@RequestParam Long id){
-        return placeService.getAllPlaceByHall(id);
+    public List<PlaceDTO> getAllPlaceByHall(@RequestParam Long idHall){
+        return placeService.getAllPlaceByHall(idHall);
 
     }
 }

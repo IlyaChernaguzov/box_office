@@ -1,24 +1,24 @@
 package com.example.demo.service;
 
-import com.example.demo.model.dto.HallDTORequest;
-import com.example.demo.model.dto.HallDTOResponse;
+import com.example.demo.model.dto.HallDTOCreate;
+import com.example.demo.model.dto.HallDTO;
 import com.example.demo.model.entity.Hall;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 public interface HallService {
-    HallDTOResponse create(HallDTORequest hallDTORequest, String nameCinema);
+    HallDTO create(HallDTOCreate hallDTOCreate);
 
-    HallDTOResponse update(HallDTORequest hallDTORequest, String nameCinema, Long id);
+    HallDTO update(HallDTO hallDTO);
 
-    HallDTOResponse get(Long id);
+    HallDTO get(Long idHall);
 
-    void delete(Long id);
+    void delete(Long idHall);
 
-    Hall getHall(Long id);
+    Hall getHall(Long idHall);
 
 //    HallDTOResponse addToCinema (Integer numberHall, String nameCinema);
 
-    List<HallDTOResponse> getAllHall(Integer page, Integer perPage, String sort, Sort.Direction order);
+    List<HallDTO> getAllHall(Integer page, Integer perPage, String sort, Sort.Direction order);
 }

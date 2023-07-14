@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.model.dto.MovieDTO;
+import com.example.demo.model.dto.MovieDTOCreate;
 import com.example.demo.service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,8 +22,8 @@ public class MovieController {
 
     @PostMapping
     @Operation(summary = "Создание фильма")
-    private ResponseEntity<MovieDTO> createMovie(@RequestBody MovieDTO movieDTO){
-        return ResponseEntity.ok(movieService.create(movieDTO));
+    private ResponseEntity<MovieDTO> createMovie(@RequestBody MovieDTOCreate movieDTOCreate){
+        return ResponseEntity.ok(movieService.create(movieDTOCreate));
 
     }
 
@@ -35,15 +36,15 @@ public class MovieController {
 
     @GetMapping
     @Operation(summary = "Посмотреть фильм")
-    private ResponseEntity<MovieDTO> getMovie(@RequestParam String nameMovie){
-        return ResponseEntity.ok(movieService.get(nameMovie));
+    private ResponseEntity<MovieDTO> getMovie(@RequestParam Long idMovie){
+        return ResponseEntity.ok(movieService.get(idMovie));
 
     }
 
     @DeleteMapping
     @Operation(summary = "Удалить фильм")
-    private ResponseEntity<HttpStatus> deleteMovie(@RequestParam String nameMovie){
-        movieService.delete(nameMovie);
+    private ResponseEntity<HttpStatus> deleteMovie(@RequestParam Long idMovie){
+        movieService.delete(idMovie);
         return ResponseEntity.ok().build();
 
     }

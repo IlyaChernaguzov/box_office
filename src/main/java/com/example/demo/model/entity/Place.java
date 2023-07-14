@@ -26,8 +26,8 @@ public class Place {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idPlace;
 
-    @Column(name = "place_number")
-    Integer placeNumber;
+//    @Column(name = "place_number")
+//    Integer placeNumber;
 
     @Column(name = "row_number")
     Integer rowNumber;
@@ -48,11 +48,11 @@ public class Place {
     @Enumerated(EnumType.STRING)
     PlaceStatus placeStatus = PlaceStatus.CREATE;
 
-//    @JsonIgnore
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     List<Order> order;
 
-//    @JsonIgnore
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     Hall hall;
 

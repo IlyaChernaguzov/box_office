@@ -1,7 +1,7 @@
 package com.example.demo.controllers;
 
-import com.example.demo.model.dto.HallDTORequest;
-import com.example.demo.model.dto.HallDTOResponse;
+import com.example.demo.model.dto.HallDTOCreate;
+import com.example.demo.model.dto.HallDTO;
 import com.example.demo.service.HallService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,32 +23,29 @@ public class HallController {
 
     @PostMapping
     @Operation(summary = "Создание зала")
-    private ResponseEntity<HallDTOResponse> createHall(@RequestBody HallDTORequest hallDTORequest,
-                                                       @RequestParam String nameCinema){
-        return ResponseEntity.ok(hallService.create(hallDTORequest, nameCinema));
+    private ResponseEntity<HallDTO> createHall(@RequestBody HallDTOCreate hallDTOCreate){
+        return ResponseEntity.ok(hallService.create(hallDTOCreate));
 
     }
 
     @PutMapping
     @Operation(summary = "Обновление данных зала")
-    private ResponseEntity<HallDTOResponse> updateHall(@RequestBody HallDTORequest hallDTORequest,
-                                                       @RequestParam String nameCinema,
-                                                       @RequestParam Long id){
-        return ResponseEntity.ok(hallService.update(hallDTORequest, nameCinema, id));
+    private ResponseEntity<HallDTO> updateHall(@RequestBody HallDTO hallDTO){
+        return ResponseEntity.ok(hallService.update(hallDTO));
 
     }
 
     @GetMapping
     @Operation(summary = "Посмотреть зал")
-    private ResponseEntity<HallDTOResponse> getHall(@RequestParam Long id){
-        return ResponseEntity.ok(hallService.get(id));
+    private ResponseEntity<HallDTO> getHall(@RequestParam Long idHall){
+        return ResponseEntity.ok(hallService.get(idHall));
 
     }
 
     @DeleteMapping
     @Operation(summary = "Удалить зал")
-    private ResponseEntity<HttpStatus> deleteHall(@RequestParam Long id){
-        hallService.delete(id);
+    private ResponseEntity<HttpStatus> deleteHall(@RequestParam Long idHall){
+        hallService.delete(idHall);
         return ResponseEntity.ok().build();
 
     }
@@ -62,10 +59,10 @@ public class HallController {
 
     @GetMapping("/all")
     @Operation(summary = "Сортировать залы")
-    public List<HallDTOResponse> getAllHall(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                            @RequestParam(required = false, defaultValue = "10") Integer perPage,
-                                            @RequestParam(required = false, defaultValue = "numberHall") String sort,
-                                            @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
+    public List<HallDTO> getAllHall(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                    @RequestParam(required = false, defaultValue = "10") Integer perPage,
+                                    @RequestParam(required = false, defaultValue = "numberHall") String sort,
+                                    @RequestParam(required = false, defaultValue = "ASC") Sort.Direction order){
         return hallService.getAllHall(page, perPage, sort, order);
 
     }

@@ -1,12 +1,11 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exceptions.CustomException;
-import com.example.demo.model.dto.CinemaDTO;
-import com.example.demo.model.dto.HallDTORequest;
-import com.example.demo.model.dto.HallDTOResponse;
+import com.example.demo.model.dto.HallDTOCreate;
+import com.example.demo.model.dto.HallDTO;
+import com.example.demo.model.dto.PlaceDTO;
 import com.example.demo.model.entity.Cinema;
 import com.example.demo.model.entity.Hall;
-import com.example.demo.model.entity.Order;
 import com.example.demo.model.enums.HallStatus;
 import com.example.demo.model.repository.HallRepository;
 import com.example.demo.service.CinemaService;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,19 +34,30 @@ public class HallServiceimpl implements HallService {
     private final ObjectMapper mapper;
 
     @Override
-    public HallDTOResponse create(HallDTORequest hallDTORequest, String nameCinema) {
+    public HallDTO create(HallDTOCreate hallDTOCreate) {
+        if(hallDTOCreate.getNumberHall() == null ||
+                hallDTOCreate.getRows() == null ||
+                hallDTOCreate.getPlaces() == null){
+            throw new CustomException("Поля не могут быть пустыми", HttpStatus.BAD_REQUEST);
+        }
 
-        hallRepository
-                .findHallByCinemaAndNumberHall(cinemaService.getCinema(nameCinema), hallDTORequest.getNumberHall())
-                .ifPresent(
-                        c -> {throw new CustomException("Зал с таким номером уже существует", HttpStatus.BAD_REQUEST);
-                        });
+        Cinema cinema = cinemaService.getCinema(hallDTOCreate.getIdCinema());
+        Integer halls = cinema.getHalls();
 
-        if (hallDTORequest.getNumberHall() > cinemaService.getCinema(nameCinema).getHalls() ||
-                hallDTORequest.getNumberHall() < 1 || hallDTORequest.getNumberHall() == null)
-        {
+        hallRepository.findHallByCinemaAndNumberHall(cinema, hallDTOCreate.getNumberHall())
+                .ifPresent(c -> {
+                    throw new CustomException("Зал с таким номером уже существует", HttpStatus.BAD_REQUEST);
+                });
+
+        if (hallDTOCreate.getNumberHall() > halls ||
+                hallDTOCreate.getNumberHall() < 1 ) {
             throw new CustomException("Зал под таким номером невозможен", HttpStatus.BAD_REQUEST);
         }
+
+//        Long idHall = hallDTORequest.getIdHall();
+//        if (idHall != null && hallRepository.findHallByIdHall(idHall).isPresent()) {
+//            throw new CustomException("Кинотеатр с id: " + idHall + " уже существует", HttpStatus.BAD_REQUEST);
+//        }
 //        List<Hall> halls = hallRepository.findHallByCinema(cinemaService.getCinema(nameCinema))
 //                .stream()
 //                .filter(o -> Objects.equals(o.getNumberHall(), hallDTORequest.getNumberHall()))
@@ -59,52 +68,63 @@ public class HallServiceimpl implements HallService {
 //            throw new CustomException("Такой зал уже существует", HttpStatus.BAD_REQUEST);
 //        }
 
-        Hall hall = mapper.convertValue(hallDTORequest, Hall.class);
-        hall.setCinema(cinemaService.getCinema(nameCinema));
+        Hall hall = new Hall();
+        hall.setNumberHall(hallDTOCreate.getNumberHall());
+        hall.setPlaces(hallDTOCreate.getPlaces());
+        hall.setRows(hallDTOCreate.getRows());
+        hall.setCinema(cinema);
         hall.setCreatedAt(LocalDateTime.now());
+
         Hall save = hallRepository.save(hall);
-        return get(save.getId());
-    }
-
-    @Override
-    public HallDTOResponse update(HallDTORequest hallDTORequest, String nameCinema, Long id) {
-        Hall hall = getHall(id);
-
-        hall.setNumberHall(hallDTORequest.getNumberHall() == null ? hall.getNumberHall() : hallDTORequest.getNumberHall());
-        hall.setPlaces(hallDTORequest.getPlaces() == null ? hall.getPlaces() : hallDTORequest.getPlaces());
-        hall.setRows(hallDTORequest.getRows() == null ? hall.getRows() : hallDTORequest.getRows());
-        hall.setCinema(nameCinema == null ? hall.getCinema() : cinemaService.getCinema(nameCinema));
-        hall.setUpdatedAt(LocalDateTime.now());
-        hall.setHallStatus(HallStatus.UPDATED);
-        Hall save = hallRepository.save(hall);
-        return get(save.getId());
-    }
-
-    @Override
-    public HallDTOResponse get(Long id) {
-
-        Hall hall = getHall(id);
-        CinemaDTO cinema = mapper.convertValue(hall.getCinema(), CinemaDTO.class);
-        HallDTOResponse result = mapper.convertValue(hall, HallDTOResponse.class);
-        result.setCinemaDTO(cinema);
+        HallDTO result = mapper.convertValue(save, HallDTO.class);
+        result.setIdHall(save.getIdHall());
+        result.setIdCinema(hallDTOCreate.getIdCinema());
         return result;
     }
 
     @Override
-    public void delete(Long id) {
+    public HallDTO update(HallDTO hallDTO) {
+        Hall hall = getHall(hallDTO.getIdHall());
 
-        Hall hall = getHall(id);
+//        hall.setIdHall(hallDTORequest.getIdHall());
+        hall.setNumberHall(hallDTO.getNumberHall() == null ? hall.getNumberHall() : hallDTO.getNumberHall());
+        hall.setPlaces(hallDTO.getPlaces() == null ? hall.getPlaces() : hallDTO.getPlaces());
+        hall.setRows(hallDTO.getRows() == null ? hall.getRows() : hallDTO.getRows());
+        hall.setCinema(hallDTO.getIdCinema() == null ? hall.getCinema() : cinemaService.getCinema(hallDTO.getIdCinema()));
+        hall.setUpdatedAt(LocalDateTime.now());
+        hall.setHallStatus(HallStatus.UPDATED);
+        Hall save = hallRepository.save(hall);
+
+        HallDTO result = mapper.convertValue(save, HallDTO.class);
+        result.setIdHall(save.getIdHall());
+        result.setIdCinema(save.getCinema().getIdCinema());
+        return result;
+    }
+
+    @Override
+    public HallDTO get(Long idHall) {
+
+        Hall hall = getHall(idHall);
+        HallDTO result = mapper.convertValue(hall, HallDTO.class);
+        result.setIdHall(idHall);
+        result.setIdCinema(hall.getCinema().getIdCinema());
+        return result;
+    }
+
+    @Override
+    public void delete(Long idHall) {
+
+        Hall hall = getHall(idHall);
         hall.setHallStatus(HallStatus.DELETED);
         hall.setUpdatedAt(LocalDateTime.now());
 //        driverRepository.delete(driver);// полное удаление
         hallRepository.save(hall);
-
     }
 
     @Override
-    public Hall getHall(Long id) {
-        return hallRepository.findById(id)
-                .orElseThrow(()-> new CustomException("Зал не найден", HttpStatus.NOT_FOUND));
+    public Hall getHall(Long idHall) {
+        return hallRepository.findByIdHall(idHall)
+                .orElseThrow(()-> new CustomException("Зал с id: " + idHall + " не найден", HttpStatus.NOT_FOUND));
     }
 
 //    @Override
@@ -119,12 +139,19 @@ public class HallServiceimpl implements HallService {
 //    }
 
     @Override
-    public List<HallDTOResponse> getAllHall(Integer page, Integer perPage, String sort, Sort.Direction order) {
+    public List<HallDTO> getAllHall(Integer page, Integer perPage, String sort, Sort.Direction order) {
         Pageable pageRequest = PaginationUtils.getPageRequest(page, perPage, sort, order);
         Page<Hall> pageResult = hallRepository.findAll(pageRequest);
 
-        List<HallDTOResponse> collect = pageResult.getContent().stream()
-                .map(c -> mapper.convertValue(c, HallDTOResponse.class))
+        List<HallDTO> collect = pageResult.getContent().stream()
+                .map(c ->
+                {
+                    HallDTO response = mapper.convertValue(c, HallDTO.class);
+                    response.setIdHall(c.getIdHall());
+                    response.setIdCinema(c.getCinema().getIdCinema());
+
+                    return response;
+                })
                 .collect(Collectors.toList());
 
         return collect;

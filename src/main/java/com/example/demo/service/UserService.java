@@ -26,12 +26,14 @@ public interface UserService {
 
     List<UserDTOResponsePlace> getAllOrderBySession (Long idSession);
 
-    List<UserDTOResponseSession> getAllSessionByCinema (String nameCinema);
+    List<UserDTOResponseSession> getAllSessionByCinema (Long idCinema);
 
-    UserDTOResponseTicket getTicket (Long idSession, Long idPlace, String email);
+    UserDTOResponseTicket getTicket (Long idOrder, String email);
 
     UserDTOResponseCancelBooking cancelBoking (Long idOrder);
 
     List<UserDTOResponseOrder> getAllOrderByUser (String email);
+
+    List<UserDTOResponseSession> getAllSessionByMovie (Long idMovie);
 
 }

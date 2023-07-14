@@ -1,21 +1,22 @@
 package com.example.demo.service;
 
 import com.example.demo.model.dto.CinemaDTO;
+import com.example.demo.model.dto.CinemaDTOCreate;
 import com.example.demo.model.entity.Cinema;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 public interface CinemaService {
-    CinemaDTO create(CinemaDTO cinemaDTO);
+    CinemaDTO create(CinemaDTOCreate cinemaDTOCreate);
 
     CinemaDTO update(CinemaDTO cinemaDTO);
 
-    CinemaDTO get(String nameCinema);
+    CinemaDTO get(Long idCinema);
 
-    void delete(String nameCinema);
+    void delete(Long idCinema);
 
-    Cinema getCinema(String nameCinema);
+    Cinema getCinema(Long idCinema);
 
     List<CinemaDTO> getAllCinema(Integer page, Integer perPage, String sort, Sort.Direction order);
 }

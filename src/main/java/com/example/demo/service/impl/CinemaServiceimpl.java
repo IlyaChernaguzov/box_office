@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.exceptions.CustomException;
 import com.example.demo.model.dto.CinemaDTO;
+import com.example.demo.model.dto.CinemaDTOCreate;
 import com.example.demo.model.entity.Cinema;
 import com.example.demo.model.enums.CinemaStatus;
 import com.example.demo.model.repository.CinemaRepository;
@@ -10,6 +11,7 @@ import com.example.demo.utils.PaginationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,57 +32,78 @@ public class CinemaServiceimpl implements CinemaService {
     private final ObjectMapper mapper;
 
     @Override
-    public CinemaDTO create(CinemaDTO cinemaDTO) {
-        cinemaRepository.findByNameCinema(cinemaDTO.getNameCinema()).ifPresent(
-                c -> {throw new CustomException("Кинотеатр с названием: " + cinemaDTO.getNameCinema() + " уже существует", HttpStatus.BAD_REQUEST);
+    public CinemaDTO create(CinemaDTOCreate cinemaDTOCreate) {
+        if (StringUtils.isBlank(cinemaDTOCreate.getNameCinema())) {
+            throw new CustomException("Поле не может быть пустым", HttpStatus.BAD_REQUEST);
+        }
+
+        if (cinemaDTOCreate.getHalls() == null) {
+            throw new CustomException("Количество залов не может быть пустым", HttpStatus.BAD_REQUEST);
+        }
+
+        cinemaRepository.findByNameCinema(cinemaDTOCreate.getNameCinema()).ifPresent(
+                c -> {throw new CustomException("Кинотеатр с названием: " + cinemaDTOCreate.getNameCinema() + " уже существует", HttpStatus.BAD_REQUEST);
                 }
         );
 
-        Cinema cinema = mapper.convertValue(cinemaDTO, Cinema.class);
+//        Long id = cinemaDTO.getIdCinema();
+//        if (id != null && cinemaRepository.findById(id).isPresent()) {
+//            throw new CustomException("Кинотеатр с id: " + id + " уже существует", HttpStatus.BAD_REQUEST);
+//        }
+
+        Cinema cinema = mapper.convertValue(cinemaDTOCreate, Cinema.class);
         cinema.setCreatedAt(LocalDateTime.now());
         Cinema save = cinemaRepository.save(cinema);
-        return mapper.convertValue(save, CinemaDTO.class);
+//        CinemaDTO result = mapper.convertValue(save, CinemaDTO.class);
+//        result.setIdCinema(save.getIdCinema());
+//        return result;
+        return get(save.getIdCinema());
     }
 
     @Override
     public CinemaDTO update(CinemaDTO cinemaDTO) {
 
-        Cinema cinema = getCinema(cinemaDTO.getNameCinema());
+        Cinema cinema = getCinema(cinemaDTO.getIdCinema());
 
-        cinema.setNameCinema(cinemaDTO.getNameCinema() == null ? cinema.getNameCinema() : cinemaDTO.getNameCinema());
-        cinema.setIndex(cinemaDTO.getIndex() == null ? cinema.getIndex() : cinemaDTO.getIndex());
-        cinema.setCity(cinemaDTO.getCity() == null ? cinema.getCity() : cinemaDTO.getCity());
-        cinema.setAddress(cinemaDTO.getAddress() == null ? cinema.getAddress() : cinemaDTO.getAddress());
+        cinema.setIdCinema(cinemaDTO.getIdCinema());
+        cinema.setNameCinema(StringUtils.isBlank(cinemaDTO.getNameCinema()) ? cinema.getNameCinema() : cinemaDTO.getNameCinema());
+        cinema.setIndex(StringUtils.isBlank(cinemaDTO.getIndex()) ? cinema.getIndex() : cinemaDTO.getIndex());
+        cinema.setCity(StringUtils.isBlank(cinemaDTO.getCity()) ? cinema.getCity() : cinemaDTO.getCity());
+        cinema.setAddress(StringUtils.isBlank(cinemaDTO.getAddress()) ? cinema.getAddress() : cinemaDTO.getAddress());
         cinema.setHalls(cinemaDTO.getHalls() == null ? cinema.getHalls() : cinemaDTO.getHalls());
         cinema.setUpdatedAt(LocalDateTime.now());
         cinema.setCinemaStatus(CinemaStatus.UPDATED);
         Cinema save = cinemaRepository.save(cinema);
-        return mapper.convertValue(save, CinemaDTO.class);
+//        CinemaDTO result = mapper.convertValue(save, CinemaDTO.class);
+//        result.setIdCinema(save.getIdCinema());
+//        return result;
+        return get(save.getIdCinema());
     }
 
     @Override
-    public CinemaDTO get(String nameCinema) {
+    public CinemaDTO get(Long idCinema) {
 
-        Cinema cinema = getCinema(nameCinema);
-        return mapper.convertValue(cinema, CinemaDTO.class);
-
+        Cinema cinema = getCinema(idCinema);
+        CinemaDTO result = mapper.convertValue(cinema, CinemaDTO.class);
+        result.setIdCinema(idCinema);
+        return result;
     }
 
     @Override
-    public void delete(String nameCinema) {
+    public void delete(Long idCinema) {
 
-        Cinema cinema = getCinema(nameCinema);
+        Cinema cinema = getCinema(idCinema);
         cinema.setCinemaStatus(CinemaStatus.DELETED);
         cinema.setUpdatedAt(LocalDateTime.now());
-//        driverRepository.delete(driver);// полное удаление
+        //cinemaRepository.delete(cinema);// полное удаление
         cinemaRepository.save(cinema);
 
     }
 
     @Override
-    public Cinema getCinema(String nameCinema) {
-        return cinemaRepository.findByNameCinema(nameCinema)
-                .orElseThrow(()-> new CustomException("Кинотеатр с названием: " + nameCinema + " не найден", HttpStatus.NOT_FOUND));
+    public Cinema getCinema(Long idCinema) {
+        return cinemaRepository.findByIdCinema(idCinema)
+                .orElseThrow(()-> new CustomException("Кинотеатр с id: " + idCinema + " не найден", HttpStatus.NOT_FOUND));
     }
 
     @Override
